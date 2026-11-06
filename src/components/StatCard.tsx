@@ -9,17 +9,12 @@ export default function StatCard() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const res = await fetch(
-          'https://github-contributions-api.jogruber.de/v4/0xProgress'
-        );
+        const res = await fetch('/commit-count.json');
         if (!res.ok) throw new Error('Failed to fetch');
         const data = await res.json();
-        const sum = data.contributions.reduce(
-          (acc: number, curr: { count: number }) => acc + curr.count,
-          0
-        );
-        setTotal(sum);
+        setTotal(data.total);
       } catch (e) {
+        console.error('Error fetching commit count:', e);
         setError(true);
       }
     }

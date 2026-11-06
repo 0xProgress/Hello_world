@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import { GitCommit } from "lucide-react";
 
 // CHANGE THIS to your main repository (e.g., "BobbyX208/your-repo")
-const REPO_OWNER = "is-a-dev";
-const REPO_NAME = "is-a.dev";
+const REPO_OWNER = "0xProgress";
+const REPO_NAME = "0xProgress";
 
 interface Commit {
   sha: string;
