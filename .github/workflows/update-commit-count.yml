@@ -37,11 +37,11 @@ jobs:
 
       - name: Update commit-count.json file
         run: |
-          echo "{\"total\": $TOTAL_COMMITS}" > commit-count.json
-          cat commit-count.json
+          echo "{\"total\": $TOTAL_COMMITS}" > public/commit-count.json
+          cat public/commit-count.json
 
       - name: Commit and push changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: 'chore: update lifetime commit count'
-          file_pattern: 'commit-count.json'
+          file_pattern: 'public/commit-count.json'
