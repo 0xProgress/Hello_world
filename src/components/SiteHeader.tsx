@@ -2,26 +2,36 @@
 
 import ThemeToggle from "@/components/ThemeToggle";
 import { Menu, X } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 interface NavItem {
   index: string;
   id: string;
   label: string;
+  href: string;
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { index: "01", id: "work", label: "work" },
-  { index: "02", id: "about", label: "about" },
-  { index: "03", id: "support", label: "support" },
-  { index: "04", id: "contact", label: "contact" },
+  { index: "01", id: "work", label: "work", href: "/#work" },
+  { index: "02", id: "writing", label: "writing", href: "/writing" },
+  { index: "03", id: "about", label: "about", href: "/#about" },
+  { index: "04", id: "support", label: "support", href: "/#support" },
+  { index: "05", id: "contact", label: "contact", href: "/#contact" },
 ];
 
 export default function SiteHeader({ handle }: { handle: string }) {
+  const pathname = usePathname();
+  const isHome = pathname === "/";
+  const isWritingRoute = pathname?.startsWith("/writing") ?? false;
+
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState<string>("");
 
   useEffect(() => {
+    if (!isHome) return;
+
     const sections = document.querySelectorAll<HTMLElement>("main section[id]");
     if (!sections.length) return;
 
@@ -38,7 +48,7 @@ export default function SiteHeader({ handle }: { handle: string }) {
 
     sections.forEach((section) => observer.observe(section));
     return () => observer.disconnect();
-  }, []);
+  }, [isHome]);
 
   useEffect(() => {
     if (!menuOpen) return;
@@ -59,12 +69,18 @@ export default function SiteHeader({ handle }: { handle: string }) {
     };
   }, [menuOpen]);
 
+  const isItemActive = (item: NavItem) => {
+    if (item.id === "writing" && isWritingRoute) return true;
+    if (isHome && activeSection === item.id) return true;
+    return false;
+  };
+
   return (
     <>
       <header className="sticky top-0 z-40 border-b border-(--border) bg-(--bg)/85 backdrop-blur-md">
         <div className="container-main flex h-16 items-center justify-between gap-4">
-          <a
-            href="#hero"
+          <Link
+            href="/"
             className="inline-flex min-h-11 items-center gap-2 font-mono text-sm font-medium text-(--text)"
           >
             <span className="text-(--accent)" aria-hidden="true">
@@ -75,7 +91,7 @@ export default function SiteHeader({ handle }: { handle: string }) {
               aria-hidden="true"
               className="inline-block h-4 w-1.5 bg-(--accent) animate-blink"
             />
-          </a>
+          </Link>
 
           {/* Tablet & Desktop Horizontal Nav */}
           <nav
@@ -84,14 +100,14 @@ export default function SiteHeader({ handle }: { handle: string }) {
           >
             <div className="flex items-center rounded-lg border border-(--border) bg-(--surface)/80 p-1">
               {NAV_ITEMS.map((item) => {
-                const isActive = activeSection === item.id;
+                const active = isItemActive(item);
                 return (
-                  <a
+                  <Link
                     key={item.id}
-                    href={`#${item.id}`}
-                    aria-current={isActive ? "location" : undefined}
+                    href={item.href}
+                    aria-current={active ? "page" : undefined}
                     className={`inline-flex min-h-9 items-center gap-1.5 rounded-md px-3 font-mono text-xs transition-colors ${
-                      isActive
+                      active
                         ? "border border-(--border) bg-(--surface-elevated) text-(--accent) font-medium"
                         : "border border-transparent text-(--text-muted) hover:text-(--text)"
                     }`}
@@ -100,7 +116,7 @@ export default function SiteHeader({ handle }: { handle: string }) {
                       {item.index}
                     </span>
                     <span>{item.label}</span>
-                  </a>
+                  </Link>
                 );
               })}
             </div>
@@ -157,9 +173,9 @@ export default function SiteHeader({ handle }: { handle: string }) {
             className="container-main flex flex-1 flex-col justify-center gap-3 py-8"
           >
             {NAV_ITEMS.map((item) => (
-              <a
+              <Link
                 key={item.id}
-                href={`#${item.id}`}
+                href={item.href}
                 onClick={() => setMenuOpen(false)}
                 className="surface-card flex min-h-14 items-center justify-between px-5 font-mono text-base text-(--text)"
               >
@@ -170,38 +186,40 @@ export default function SiteHeader({ handle }: { handle: string }) {
                 <span aria-hidden="true" className="text-(--text-subtle)">
                   →
                 </span>
-              </a>
+              </Link>
             ))}
           </nav>
         </div>
       )}
 
-      {/* Sticky Section Rail on Wide Desktop Viewports */}
-      <aside
-        aria-label="Section index"
-        className="pointer-events-none fixed inset-y-0 right-6 z-30 hidden xl:flex items-center"
-      >
-        <nav className="pointer-events-auto flex flex-col gap-1 rounded-lg border border-(--border) bg-(--surface)/85 p-2 backdrop-blur-md">
-          {NAV_ITEMS.map((item) => {
-            const isActive = activeSection === item.id;
-            return (
-              <a
-                key={item.id}
-                href={`#${item.id}`}
-                aria-current={isActive ? "location" : undefined}
-                className={`inline-flex min-h-9 items-center gap-2 rounded-md px-2.5 font-mono text-xs transition-colors ${
-                  isActive
-                    ? "bg-(--accent-soft) text-(--accent) font-medium"
-                    : "text-(--text-subtle) hover:text-(--text)"
-                }`}
-              >
-                <span className="text-[10px] opacity-70">{item.index}</span>
-                <span>{item.label}</span>
-              </a>
-            );
-          })}
-        </nav>
-      </aside>
+      {/* Sticky Section Rail on Wide Desktop Home Viewports */}
+      {isHome && (
+        <aside
+          aria-label="Section index"
+          className="pointer-events-none fixed inset-y-0 right-6 z-30 hidden xl:flex items-center"
+        >
+          <nav className="pointer-events-auto flex flex-col gap-1 rounded-lg border border-(--border) bg-(--surface)/85 p-2 backdrop-blur-md">
+            {NAV_ITEMS.map((item) => {
+              const active = activeSection === item.id;
+              return (
+                <a
+                  key={item.id}
+                  href={`#${item.id}`}
+                  aria-current={active ? "location" : undefined}
+                  className={`inline-flex min-h-9 items-center gap-2 rounded-md px-2.5 font-mono text-xs transition-colors ${
+                    active
+                      ? "bg-(--accent-soft) text-(--accent) font-medium"
+                      : "text-(--text-subtle) hover:text-(--text)"
+                  }`}
+                >
+                  <span className="text-[10px] opacity-70">{item.index}</span>
+                  <span>{item.label}</span>
+                </a>
+              );
+            })}
+          </nav>
+        </aside>
+      )}
     </>
   );
 }

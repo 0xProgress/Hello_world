@@ -5,18 +5,9 @@ import SiteHeader from "@/components/SiteHeader";
 import SponsorGrid from "@/components/SponsorGrid";
 import StatCard from "@/components/StatCard";
 import { links, person, projects } from "@/content/profile";
+import { getAllPostsMeta } from "@/lib/posts";
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
-
-interface WritingPreview {
-  slug: string;
-  title: string;
-  publishedAt: string;
-  summary: string;
-}
-
-// Populated in Stage 3; section renders nothing until posts exist.
-const latestPosts: WritingPreview[] = [];
 
 const GithubMark = () => (
   <svg
@@ -33,7 +24,7 @@ const GithubMark = () => (
 
 export default function Page() {
   const city = person.location.split(",")[0]?.trim() ?? person.location;
-  const visiblePosts = latestPosts.slice(0, 3);
+  const visiblePosts = getAllPostsMeta().slice(0, 3);
   const stackPills = person.skillsSummary.split("·").map((item) => item.trim());
 
   return (
@@ -65,7 +56,7 @@ export default function Page() {
 
               <h1
                 id="hero-heading"
-                className="font-serif text-[length:var(--text-hero)] text-(--text) hover-wonk mb-4 sm:mb-5 leading-[1.08] tracking-tight"
+                className="font-serif text-(length:--text-hero) text-(--text) hover-wonk mb-4 sm:mb-5 leading-[1.08] tracking-tight"
               >
                 &ldquo;{person.tagline}&rdquo;
               </h1>
@@ -133,7 +124,7 @@ export default function Page() {
               </p>
               <h2
                 id="work-heading"
-                className="font-serif text-[length:var(--text-2xl)] text-(--text)"
+                className="font-serif text-(length:--text-2xl) text-(--text)"
               >
                 Work &amp; Open Source
               </h2>
@@ -146,38 +137,54 @@ export default function Page() {
           <ProjectGrid projects={projects} />
         </section>
 
-        {/* 3. Writing (Renders nothing until Stage 3 posts exist) */}
+        {/* 3. Writing (Renders nothing until posts exist) */}
         {visiblePosts.length > 0 && (
           <section
             id="writing"
             aria-labelledby="writing-heading"
             className="section-block border-t border-(--border)"
           >
-            <p className="font-mono text-[11px] uppercase tracking-widest text-(--accent) mb-1">
-              Notes &amp; Logs
-            </p>
-            <h2
-              id="writing-heading"
-              className="font-serif text-[length:var(--text-2xl)] text-(--text) mb-6 sm:mb-8"
-            >
-              Latest Writing
-            </h2>
+            <div className="flex flex-wrap items-baseline justify-between gap-4 mb-6 sm:mb-8">
+              <div>
+                <p className="font-mono text-[11px] uppercase tracking-widest text-(--accent) mb-1">
+                  02 {"//"} Notes &amp; Logs
+                </p>
+                <h2
+                  id="writing-heading"
+                  className="font-serif text-(length:--text-2xl) text-(--text)"
+                >
+                  Latest Writing
+                </h2>
+              </div>
+              <Link
+                href="/writing"
+                className="inline-flex min-h-11 items-center gap-1.5 font-mono text-xs text-(--text-muted) hover:text-(--accent) transition-colors"
+              >
+                <span>All posts</span>
+                <ArrowUpRight size={14} aria-hidden="true" />
+              </Link>
+            </div>
+
             <div className="space-y-3 sm:space-y-4">
               {visiblePosts.map((post) => (
                 <Link
                   key={post.slug}
                   href={`/writing/${post.slug}`}
-                  className="surface-card block p-5 sm:p-6"
+                  className="surface-card group block p-5 sm:p-6"
                 >
                   <div className="flex flex-wrap items-baseline justify-between gap-2 mb-2">
-                    <h3 className="font-mono text-base text-(--text)">
+                    <h3 className="font-mono text-base font-medium text-(--text) group-hover:text-(--accent) transition-colors">
                       {post.title}
                     </h3>
-                    <time className="font-mono text-xs text-(--text-subtle)">
-                      {post.publishedAt}
-                    </time>
+                    <div className="flex items-center gap-2 font-mono text-xs text-(--text-subtle)">
+                      <time dateTime={post.date}>{post.date}</time>
+                      <span aria-hidden="true">·</span>
+                      <span>{post.readingTime}</span>
+                    </div>
                   </div>
-                  <p className="text-sm text-(--text-muted)">{post.summary}</p>
+                  <p className="text-sm text-(--text-muted)">
+                    {post.description}
+                  </p>
                 </Link>
               ))}
             </div>
@@ -191,11 +198,11 @@ export default function Page() {
           className="section-block border-t border-(--border)"
         >
           <p className="font-mono text-[11px] uppercase tracking-widest text-(--accent) mb-1">
-            02 {"//"} Background
+            03 {"//"} Background
           </p>
           <h2
             id="about-heading"
-            className="font-serif text-[length:var(--text-2xl)] text-(--text) mb-4 sm:mb-6"
+            className="font-serif text-(length:--text-2xl) text-(--text) mb-4 sm:mb-6"
           >
             Self-taught &amp; shipping in public
           </h2>
@@ -227,11 +234,11 @@ export default function Page() {
           className="section-block border-t border-(--border)"
         >
           <p className="font-mono text-[11px] uppercase tracking-widest text-(--accent) mb-1">
-            03 {"//"} Sponsorship
+            04 {"//"} Sponsorship
           </p>
           <h2
             id="support-heading"
-            className="font-serif text-[length:var(--text-2xl)] italic text-(--text) mb-3 sm:mb-4"
+            className="font-serif text-(length:--text-2xl) italic text-(--text) mb-3 sm:mb-4"
           >
             &ldquo;Support the work.&rdquo;
           </h2>
@@ -267,11 +274,11 @@ export default function Page() {
           className="section-block border-t border-(--border)"
         >
           <p className="font-mono text-[11px] uppercase tracking-widest text-(--accent) mb-1">
-            04 {"//"} Connect
+            05 {"//"} Connect
           </p>
           <h2
             id="contact-heading"
-            className="font-serif text-[length:var(--text-2xl)] text-(--text) mb-5 sm:mb-6"
+            className="font-serif text-(length:--text-2xl) text-(--text) mb-5 sm:mb-6"
           >
             &ldquo;Let&apos;s talk.&rdquo;
           </h2>
