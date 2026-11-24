@@ -1,10 +1,9 @@
 'use client';
 
-import SponsorGrid from '@/components/SponsorGrid';
-import StatCard from '@/components/StatCard';
-import { links, person, projects } from '@/content/profile';
-import { ExternalLink } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { ExternalLink } from 'lucide-react';
+import StatCard from '@/components/StatCard';
+import SponsorGrid from '@/components/SponsorGrid';
 
 const GithubIcon = ({ size = 12 }: { size?: number }) => (
   <svg
@@ -38,11 +37,11 @@ function NavRail() {
     return () => observer.disconnect();
   }, []);
 
-  const navLinks = ['work', 'about', 'sponsor', 'contact'];
+  const links = ['work', 'about', 'sponsor', 'contact'];
 
   return (
     <nav className="nav-rail">
-      {navLinks.map((link) => (
+      {links.map((link) => (
         <a
           key={link}
           href={`#${link}`}
@@ -60,7 +59,7 @@ export default function Page() {
     <>
       {/* Fixed Logo */}
       <div className="fixed top-6 left-6 z-50 font-mono text-sm text-stone-50">
-        {person.handle}
+        0xProgress
         <span className="inline-block w-2 h-4 bg-purple-400 animate-blink ml-0.5 align-middle"></span>
       </div>
 
@@ -72,17 +71,17 @@ export default function Page() {
         {/* 1. Hero */}
         <section id="hero" className="pt-32 pb-24">
           <p className="font-mono text-xs text-stone-400 mb-2">
-            {person.name}
+            Progress O. Uwhuseba
           </p>
           <p className="font-mono text-xs text-stone-400 mb-8 flex items-center gap-2">
-            {person.location}{' '}
+            Lagos, Nigeria{' '}
             <span className="inline-block w-2 h-2 bg-purple-400 rounded-full animate-blink"></span>
           </p>
           <h1 className="font-serif text-4xl md:text-6xl text-stone-50 hover-wonk mb-6 max-w-2xl leading-tight">
-            &ldquo;{person.tagline}&rdquo;
+            "I build small tools that punch above their weight."
           </h1>
           <p className="font-mono text-xs text-stone-400">
-            {person.focus}
+            Go · Python · Backend · OSS
           </p>
         </section>
 
@@ -92,31 +91,58 @@ export default function Page() {
             work
           </p>
           <div className="space-y-4">
-            {projects.map((project) => (
-              <a
-                key={project.slug}
-                href={project.packageUrl || project.repoUrl || '#'}
-                className="block bg-stone-900 p-6 card-hover-border rounded-sm"
-              >
-                <div className="flex justify-between items-start mb-2">
-                  <h3 className="font-mono text-stone-50">
-                    {project.name}
-                    {project.role && (
-                      <span className="text-stone-500 text-[10px]">
-                        {' '}({project.role})
-                      </span>
-                    )}
-                  </h3>
-                  <ExternalLink size={14} className="text-stone-500 mt-1" />
-                </div>
-                <p className="text-stone-400 text-sm mb-4">
-                  {project.summary}
-                </p>
-                <p className="font-mono text-[10px] text-stone-500">
-                  {project.tags.join(' · ')}
-                </p>
-              </a>
-            ))}
+            <a
+              href="https://pypi.org/project/envdiff/"
+              className="block bg-stone-900 p-6 card-hover-border rounded-sm"
+            >
+              <div className="flex justify-between items-start mb-2">
+                <h3 className="font-mono text-stone-50">envdiff</h3>
+                <ExternalLink size={14} className="text-stone-500 mt-1" />
+              </div>
+              <p className="text-stone-400 text-sm mb-4">
+                Compare .env files. Zero config. CI-native.
+              </p>
+              <p className="font-mono text-[10px] text-stone-500">
+                python · cli · security
+              </p>
+            </a>
+
+            <a
+              href="https://github.com/0xProgress/waitfor"
+              className="block bg-stone-900 p-6 card-hover-border rounded-sm"
+            >
+              <div className="flex justify-between items-start mb-2">
+                <h3 className="font-mono text-stone-50">waitfor</h3>
+                <ExternalLink size={14} className="text-stone-500 mt-1" />
+              </div>
+              <p className="text-stone-400 text-sm mb-4">
+                Blocks until a condition is true. Tells you why it failed.
+              </p>
+              <p className="font-mono text-[10px] text-stone-500">
+                go · cli · devtools
+              </p>
+            </a>
+
+            <a
+              href="https://is-a.dev"
+              className="block bg-stone-900 p-6 card-hover-border rounded-sm"
+            >
+              <div className="flex justify-between items-start mb-2">
+                <h3 className="font-mono text-stone-50">
+                  is-a.dev{' '}
+                  <span className="text-stone-500 text-[10px]">
+                    (maintainer)
+                  </span>
+                </h3>
+                <ExternalLink size={14} className="text-stone-500 mt-1" />
+              </div>
+              <p className="text-stone-400 text-sm mb-4">
+                Free subdomains for developers. Thousands rely on it.
+              </p>
+              <p className="font-mono text-[10px] text-stone-500">
+                dns · open-source · community
+              </p>
+            </a>
           </div>
         </section>
 
@@ -126,7 +152,9 @@ export default function Page() {
             about
           </p>
           <p className="text-stone-400 max-w-xl mb-8">
-            {person.shortBio}
+            CS student in Lagos. No internships, no employer, just 4 years of
+            building things because I couldn't stop. Everything I ship is open
+            source.
           </p>
 
           <div className="mb-8">
@@ -141,7 +169,7 @@ export default function Page() {
               &gt; self-taught. ships real things.
             </p>
             <p className="text-stone-400">
-              &nbsp;&nbsp;Boot.dev &rarr; Go mastery in progress.
+              &nbsp;&nbsp;Boot.dev → Go mastery in progress.
             </p>
             <p className="text-stone-400">
               &nbsp;&nbsp;GitHub Education Dev Pack holder.
@@ -161,7 +189,7 @@ export default function Page() {
             sponsor
           </p>
           <h2 className="font-serif text-3xl md:text-4xl text-stone-50 italic mb-4">
-            &ldquo;Support the work.&rdquo;
+            "Support the work."
           </h2>
           <p className="text-stone-400 max-w-xl mb-8">
             Everything here is free and open source. If any of it saved you
@@ -170,10 +198,10 @@ export default function Page() {
           </p>
 
           <a
-            href={links.sponsor}
+            href="https://github.com/sponsors/0xProgress"
             className="inline-block bg-purple-400 text-stone-950 font-mono text-sm px-6 py-3 rounded-sm hover:opacity-90 transition-opacity"
           >
-            &hearts; Sponsor on GitHub
+            ♥ Sponsor on GitHub
           </a>
 
           <div className="mt-16">
@@ -195,29 +223,29 @@ export default function Page() {
             contact
           </p>
           <h2 className="font-serif text-3xl md:text-4xl text-stone-50 mb-6">
-            &ldquo;Let&apos;s talk.&rdquo;
+            "Let's talk."
           </h2>
           <div className="font-mono text-sm flex flex-wrap gap-x-6 gap-y-2">
             <a
-              href={links.github}
+              href="https://github.com/0xProgress"
               className="text-stone-400 hover:underline decoration-purple-400 underline-offset-4 transition-all"
             >
               github
             </a>
             <a
-              href={links.x}
+              href="https://x.com/0xProgress"
               className="text-stone-400 hover:underline decoration-purple-400 underline-offset-4 transition-all"
             >
               x
             </a>
             <a
-              href={links.discord}
+              href="https://discord.com/users/1214231706698252320"
               className="text-stone-400 hover:underline decoration-purple-400 underline-offset-4 transition-all"
             >
               discord
             </a>
             <a
-              href={links.email}
+              href="mailto:progressuwhuseba@gmail.com"
               className="text-stone-400 hover:underline decoration-purple-400 underline-offset-4 transition-all"
             >
               progressuwhuseba@gmail.com
@@ -228,7 +256,7 @@ export default function Page() {
         {/* 7. Footer */}
         <footer className="py-12 border-t border-stone-700">
           <p className="font-mono text-xs text-stone-500">
-            &copy; 2026 {person.copyrightName} &middot; built in {person.city}
+            © 2026 Progress Uwhuseba · built in Lagos
           </p>
         </footer>
       </main>
