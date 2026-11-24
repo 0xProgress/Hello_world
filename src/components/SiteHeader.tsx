@@ -1,7 +1,9 @@
 "use client";
 
+import CommandPalette, { type PalettePost } from "@/components/CommandPalette";
 import ThemeToggle from "@/components/ThemeToggle";
 import VibeSwitcher from "@/components/VibeSwitcher";
+import { projects } from "@/content/profile";
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -22,7 +24,13 @@ const NAV_ITEMS: NavItem[] = [
   { index: "05", id: "contact", label: "contact", href: "/#contact" },
 ];
 
-export default function SiteHeader({ handle }: { handle: string }) {
+export default function SiteHeader({
+  handle,
+  posts = [],
+}: {
+  handle: string;
+  posts?: PalettePost[];
+}) {
   const pathname = usePathname();
   const isHome = pathname === "/";
   const isWritingRoute = pathname?.startsWith("/writing") ?? false;
@@ -122,13 +130,15 @@ export default function SiteHeader({ handle }: { handle: string }) {
               })}
             </div>
             <div className="ml-2 flex items-center gap-1.5">
+              <CommandPalette projects={projects} posts={posts} />
               <VibeSwitcher />
               <ThemeToggle />
             </div>
           </nav>
 
-          {/* Mobile Controls (>= 44px touch targets) */}
-          <div className="flex items-center gap-1.5 md:hidden shrink-0">
+          {/* Mobile Controls (>= 44px touch targets, fits comfortably at 360px) */}
+          <div className="flex items-center gap-1 md:hidden shrink-0">
+            <CommandPalette projects={projects} posts={posts} />
             <VibeSwitcher />
             <ThemeToggle />
             <button

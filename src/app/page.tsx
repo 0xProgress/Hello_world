@@ -27,29 +27,34 @@ export default function Page() {
   const visiblePosts = getAllPostsMeta().slice(0, 3);
   const stackPills = person.skillsSummary.split("·").map((item) => item.trim());
 
-  const personJsonLd = {
+  const profilePageJsonLd = {
     "@context": "https://schema.org",
-    "@type": "Person",
-    name: person.name,
-    alternateName: person.handle,
-    url: links.website,
-    image: `${links.website.replace(/\/$/, "")}/og-image.png`,
-    jobTitle: "Software developer",
-    description: person.metaDescription,
-    knowsAbout: ["Go", "Python", "Backend development", "Open source"],
-    address: {
-      "@type": "PostalAddress",
-      addressLocality: "Lagos",
-      addressCountry: "NG",
+    "@type": "ProfilePage",
+    dateCreated: "2026-01-01T00:00:00Z",
+    dateModified: visiblePosts[0]?.date ?? "2026-11-24",
+    mainEntity: {
+      "@type": "Person",
+      name: person.name,
+      alternateName: person.handle,
+      url: links.website,
+      image: `${links.website.replace(/\/$/, "")}/og-image.png`,
+      jobTitle: "Software developer",
+      description: person.metaDescription,
+      knowsAbout: ["Go", "Python", "Backend development", "Open source"],
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: "Lagos",
+        addressCountry: "NG",
+      },
+      sameAs: [links.github, links.x, links.discord],
     },
-    sameAs: [links.github, links.x, links.discord],
   };
 
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(profilePageJsonLd) }}
       />
       <SiteHeader handle={person.handle} />
 
