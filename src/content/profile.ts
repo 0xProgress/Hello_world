@@ -60,7 +60,7 @@ export const person: PersonProfile = {
   location: "Lagos, Nigeria",
   tagline: "I build small tools that punch above their weight.",
   shortBio:
-    "CS student in Lagos. No internships, no employer, just 4 years of building things because I couldn't stop. Everything I ship is open source.",
+    "CS student in Lagos. No internships, no employer, just 4+ years of studying and shipping. Behind the scenes is a classic developer graveyard of half-built ideas, but everything I actually ship is open source.",
   metaDescription:
     "CS student in Lagos building small tools that punch above their weight. Open source CLI tools, backend development, and developer utilities. Creator of waitfor, clippy, and is-a.dev maintainer.",
   skillsSummary: "Go · Python · Backend · OSS",

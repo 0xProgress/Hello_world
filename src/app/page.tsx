@@ -1,239 +1,330 @@
-'use client';
+import HeroTelemetry from "@/components/HeroTelemetry";
+import InteractiveTerminal from "@/components/InteractiveTerminal";
+import ProjectGrid from "@/components/ProjectGrid";
+import SiteHeader from "@/components/SiteHeader";
+import SponsorGrid from "@/components/SponsorGrid";
+import StatCard from "@/components/StatCard";
+import { links, person, projects } from "@/content/profile";
+import { ArrowUpRight } from "lucide-react";
+import Link from "next/link";
 
-import { useEffect, useState } from 'react';
-import { ExternalLink } from 'lucide-react';
-import StatCard from '@/components/StatCard';
-import SponsorGrid from '@/components/SponsorGrid';
-import { links, person, projects } from '@/content/profile';
+interface WritingPreview {
+  slug: string;
+  title: string;
+  publishedAt: string;
+  summary: string;
+}
 
-const GithubIcon = ({ size = 12 }: { size?: number }) => (
+// Populated in Stage 3; section renders nothing until posts exist.
+const latestPosts: WritingPreview[] = [];
+
+const GithubMark = () => (
   <svg
-    width={size}
-    height={size}
+    width={14}
+    height={14}
     viewBox="0 0 24 24"
     fill="currentColor"
-    className="text-stone-500"
+    aria-hidden="true"
+    className="shrink-0 text-(--text-subtle)"
   >
     <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
   </svg>
 );
 
-function NavRail() {
-  const [active, setActive] = useState('');
-
-  useEffect(() => {
-    const sections = document.querySelectorAll('section[id]');
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setActive(entry.target.id);
-          }
-        });
-      },
-      { rootMargin: '-40% 0px -40% 0px' }
-    );
-
-    sections.forEach((section) => observer.observe(section));
-    return () => observer.disconnect();
-  }, []);
-
-  const navItems = ['work', 'about', 'sponsor', 'contact'];
-
-  return (
-    <nav className="nav-rail">
-      {navItems.map((item) => (
-        <a
-          key={item}
-          href={`#${item}`}
-          className={`nav-link ${active === item ? 'active' : ''}`}
-        >
-          {item}
-        </a>
-      ))}
-    </nav>
-  );
-}
-
 export default function Page() {
-  const city = person.location.split(',')[0]?.trim() ?? person.location;
+  const city = person.location.split(",")[0]?.trim() ?? person.location;
+  const visiblePosts = latestPosts.slice(0, 3);
+  const stackPills = person.skillsSummary.split("·").map((item) => item.trim());
 
   return (
     <>
-      {/* Fixed Logo */}
-      <div className="fixed top-6 left-6 z-50 font-mono text-sm text-stone-50">
-        {person.handle}
-        <span className="inline-block w-2 h-4 bg-purple-400 animate-blink ml-0.5 align-middle"></span>
-      </div>
+      <SiteHeader handle={person.handle} />
 
-      {/* Fixed Right Rail Nav */}
-      <NavRail />
-
-      {/* Main Content */}
-      <main className="max-w-3xl mx-auto px-6">
+      <main id="main-content" className="container-main">
         {/* 1. Hero */}
-        <section id="hero" className="pt-32 pb-24">
-          <p className="font-mono text-xs text-stone-400 mb-2">{person.name}</p>
-          <p className="font-mono text-xs text-stone-400 mb-8 flex items-center gap-2">
-            {person.location}{' '}
-            <span className="inline-block w-2 h-2 bg-purple-400 rounded-full animate-blink"></span>
-          </p>
-          <h1 className="font-serif text-4xl md:text-6xl text-stone-50 hover-wonk mb-6 max-w-2xl leading-tight">
-            &ldquo;{person.tagline}&rdquo;
-          </h1>
-          <p className="font-mono text-xs text-stone-400">
-            {person.skillsSummary}
-          </p>
+        <section
+          id="hero"
+          aria-labelledby="hero-heading"
+          className="pt-10 pb-12 sm:pt-20 sm:pb-20 lg:pt-24 lg:pb-24"
+        >
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-start">
+            {/* Editorial Pitch Column */}
+            <div className="lg:col-span-7">
+              <div className="mb-4 sm:mb-6 flex flex-wrap items-center gap-2.5">
+                <span className="inline-flex items-center gap-2 rounded-full border border-(--border) bg-(--surface) px-3 py-1 font-mono text-xs text-(--text-muted)">
+                  <span
+                    aria-hidden="true"
+                    className="h-2 w-2 rounded-full bg-(--status-active)"
+                  />
+                  <span>{person.location}</span>
+                </span>
+                <span className="font-mono text-xs text-(--text-subtle)">
+                  {person.name}
+                </span>
+              </div>
+
+              <h1
+                id="hero-heading"
+                className="font-serif text-[length:var(--text-hero)] text-(--text) hover-wonk mb-4 sm:mb-5 leading-[1.08] tracking-tight"
+              >
+                &ldquo;{person.tagline}&rdquo;
+              </h1>
+
+              <p className="max-w-xl text-sm sm:text-lg leading-relaxed text-(--text-muted) mb-5 sm:mb-7">
+                Open-source CLI tools, resilient developer utilities, and DNS
+                infrastructure built in public from {city}.
+              </p>
+
+              <div
+                aria-label="Core technologies"
+                className="flex flex-wrap items-center gap-1.5 sm:gap-2 mb-6 sm:mb-8"
+              >
+                {stackPills.map((pill) => (
+                  <span
+                    key={pill}
+                    className="rounded-md border border-(--border) bg-(--surface) px-2.5 py-1 font-mono text-xs text-(--text-muted)"
+                  >
+                    {pill}
+                  </span>
+                ))}
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
+                <a
+                  href="#work"
+                  className="inline-flex min-h-11 items-center gap-2 rounded-md bg-(--accent) px-4 py-2 font-mono text-xs font-medium text-(--accent-contrast) transition-opacity hover:opacity-90"
+                >
+                  <span>Explore work</span>
+                  <span aria-hidden="true">↓</span>
+                </a>
+                <a
+                  href={links.github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex min-h-11 items-center gap-2 rounded-md border border-(--border) bg-(--surface) px-4 py-2 font-mono text-xs text-(--text) transition-colors hover:border-(--accent)"
+                >
+                  <span>GitHub</span>
+                  <ArrowUpRight size={14} aria-hidden="true" />
+                </a>
+              </div>
+            </div>
+
+            {/* Precision Telemetry Spec Card (collapsible on mobile, expanded on desktop) */}
+            <div className="lg:col-span-5">
+              <HeroTelemetry
+                handle={person.handle}
+                location={person.location}
+                projectCount={projects.length}
+              />
+            </div>
+          </div>
         </section>
 
         {/* 2. Work */}
-        <section id="work" className="py-24">
-          <p className="font-mono text-xs uppercase text-stone-500 mb-8">
-            work
-          </p>
-          <div className="space-y-4">
-            {projects.map((project) => {
-              const primaryUrl =
-                project.packageUrl ?? project.docsUrl ?? project.repoUrl;
-
-              return (
-                <a
-                  key={project.slug}
-                  href={primaryUrl}
-                  className="block bg-stone-900 p-6 card-hover-border rounded-sm"
-                >
-                  <div className="flex justify-between items-start mb-2">
-                    <h3 className="font-mono text-stone-50">
-                      {project.name}
-                      {project.role && (
-                        <span className="text-stone-500 text-[10px]">
-                          {' '}
-                          ({project.role})
-                        </span>
-                      )}
-                    </h3>
-                    <ExternalLink size={14} className="text-stone-500 mt-1" />
-                  </div>
-                  <p className="text-stone-400 text-sm mb-4">
-                    {project.summary}
-                  </p>
-                  <p className="font-mono text-[10px] text-stone-500">
-                    {project.tags.join(' · ')}
-                  </p>
-                </a>
-              );
-            })}
-          </div>
-        </section>
-
-        {/* 3. About */}
-        <section id="about" className="py-24">
-          <p className="font-mono text-xs uppercase text-stone-500 mb-8">
-            about
-          </p>
-          <p className="text-stone-400 max-w-xl mb-8">{person.shortBio}</p>
-
-          <div className="mb-8">
-            <StatCard />
-          </div>
-
-          <div className="bg-stone-800 border border-stone-700 p-6 rounded-sm font-mono text-sm mb-6">
-            <p>
-              <span className="text-purple-400">$</span> whoami
-            </p>
-            {person.terminalLines.map((line, idx) => (
-              <p
-                key={line}
-                className={idx === 0 ? 'text-stone-400 mt-2' : 'text-stone-400'}
-              >
-                {idx === 0 ? `> ${line}` : `\u00A0\u00A0${line}`}
+        <section
+          id="work"
+          aria-labelledby="work-heading"
+          className="section-block border-t border-(--border)"
+        >
+          <div className="flex flex-wrap items-baseline justify-between gap-4 mb-6 sm:mb-10">
+            <div>
+              <p className="font-mono text-[11px] uppercase tracking-widest text-(--accent) mb-1">
+                01 {"//"} Selected Systems
               </p>
-            ))}
+              <h2
+                id="work-heading"
+                className="font-serif text-[length:var(--text-2xl)] text-(--text)"
+              >
+                Work &amp; Open Source
+              </h2>
+            </div>
+            <span className="font-mono text-xs text-(--text-subtle)">
+              0{projects.length} repositories
+            </span>
           </div>
 
-          <p className="font-mono text-xs text-stone-500 flex items-center gap-2">
-            <GithubIcon size={12} />
-            {person.educationNote}
+          <ProjectGrid projects={projects} />
+        </section>
+
+        {/* 3. Writing (Renders nothing until Stage 3 posts exist) */}
+        {visiblePosts.length > 0 && (
+          <section
+            id="writing"
+            aria-labelledby="writing-heading"
+            className="section-block border-t border-(--border)"
+          >
+            <p className="font-mono text-[11px] uppercase tracking-widest text-(--accent) mb-1">
+              Notes &amp; Logs
+            </p>
+            <h2
+              id="writing-heading"
+              className="font-serif text-[length:var(--text-2xl)] text-(--text) mb-6 sm:mb-8"
+            >
+              Latest Writing
+            </h2>
+            <div className="space-y-3 sm:space-y-4">
+              {visiblePosts.map((post) => (
+                <Link
+                  key={post.slug}
+                  href={`/writing/${post.slug}`}
+                  className="surface-card block p-5 sm:p-6"
+                >
+                  <div className="flex flex-wrap items-baseline justify-between gap-2 mb-2">
+                    <h3 className="font-mono text-base text-(--text)">
+                      {post.title}
+                    </h3>
+                    <time className="font-mono text-xs text-(--text-subtle)">
+                      {post.publishedAt}
+                    </time>
+                  </div>
+                  <p className="text-sm text-(--text-muted)">{post.summary}</p>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* 4. About */}
+        <section
+          id="about"
+          aria-labelledby="about-heading"
+          className="section-block border-t border-(--border)"
+        >
+          <p className="font-mono text-[11px] uppercase tracking-widest text-(--accent) mb-1">
+            02 {"//"} Background
+          </p>
+          <h2
+            id="about-heading"
+            className="font-serif text-[length:var(--text-2xl)] text-(--text) mb-4 sm:mb-6"
+          >
+            Self-taught &amp; shipping in public
+          </h2>
+
+          <p className="text-sm sm:text-base leading-relaxed text-(--text-muted) max-w-2xl mb-6 sm:mb-8">
+            {person.shortBio}
+          </p>
+
+          <div className="mb-6 sm:mb-8">
+            <StatCard projectCount={projects.length} />
+          </div>
+
+          <InteractiveTerminal
+            handle={person.handle}
+            terminalLines={person.terminalLines}
+            projects={projects}
+          />
+
+          <p className="font-mono text-xs text-(--text-subtle) flex items-center gap-2">
+            <GithubMark />
+            <span>{person.educationNote}</span>
           </p>
         </section>
 
-        {/* 5. Sponsor */}
-        <section id="sponsor" className="py-24">
-          <p className="font-mono text-xs uppercase text-stone-500 mb-8">
-            sponsor
+        {/* 5. Support */}
+        <section
+          id="support"
+          aria-labelledby="support-heading"
+          className="section-block border-t border-(--border)"
+        >
+          <p className="font-mono text-[11px] uppercase tracking-widest text-(--accent) mb-1">
+            03 {"//"} Sponsorship
           </p>
-          <h2 className="font-serif text-3xl md:text-4xl text-stone-50 italic mb-4">
+          <h2
+            id="support-heading"
+            className="font-serif text-[length:var(--text-2xl)] italic text-(--text) mb-3 sm:mb-4"
+          >
             &ldquo;Support the work.&rdquo;
           </h2>
-          <p className="text-stone-400 max-w-xl mb-8">
-            Everything here is free and open source. If any of it saved you
-            time, sponsoring helps me build more of it and get to full-time OSS
-            faster.
+
+          <p className="text-sm sm:text-base leading-relaxed text-(--text-muted) max-w-2xl mb-6 sm:mb-8">
+            Everything here is free and open source. If a tool saved you time or
+            unblocked a deploy, sponsoring on GitHub helps sustain the work and
+            supports future releases.
           </p>
 
           <a
             href={links.sponsor}
-            className="inline-block bg-purple-400 text-stone-950 font-mono text-sm px-6 py-3 rounded-sm hover:opacity-90 transition-opacity"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex min-h-11 items-center gap-2 rounded-md bg-(--accent) px-5 py-2.5 font-mono text-sm font-medium text-(--accent-contrast) transition-opacity hover:opacity-90"
           >
-            ♥ Sponsor on GitHub
+            <span aria-hidden="true">♥</span>
+            <span>Sponsor on GitHub</span>
           </a>
 
-          <div className="mt-16">
-            <p className="font-mono text-xs text-stone-500 mb-6">
-              Current sponsors
+          <div className="mt-8 sm:mt-12">
+            <p className="font-mono text-xs uppercase tracking-wider text-(--text-subtle) mb-3 sm:mb-4">
+              Backed by
             </p>
             <SponsorGrid />
-            <p className="text-stone-400 text-sm mt-8 max-w-xl">
-              Sponsor slots are visible to everyone who visits. Sponsorship is
-              recurring, any amount. Your support directly funds open-source
-              work built in public, for developers.
-            </p>
           </div>
         </section>
 
         {/* 6. Contact */}
-        <section id="contact" className="py-24">
-          <p className="font-mono text-xs uppercase text-stone-500 mb-8">
-            contact
+        <section
+          id="contact"
+          aria-labelledby="contact-heading"
+          className="section-block border-t border-(--border)"
+        >
+          <p className="font-mono text-[11px] uppercase tracking-widest text-(--accent) mb-1">
+            04 {"//"} Connect
           </p>
-          <h2 className="font-serif text-3xl md:text-4xl text-stone-50 mb-6">
+          <h2
+            id="contact-heading"
+            className="font-serif text-[length:var(--text-2xl)] text-(--text) mb-5 sm:mb-6"
+          >
             &ldquo;Let&apos;s talk.&rdquo;
           </h2>
-          <div className="font-mono text-sm flex flex-wrap gap-x-6 gap-y-2">
+
+          <div className="font-mono text-sm flex flex-wrap gap-2">
             <a
               href={links.github}
-              className="text-stone-400 hover:underline decoration-purple-400 underline-offset-4 transition-all"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="surface-card inline-flex min-h-11 items-center gap-2 px-4 text-(--text-muted) hover:text-(--text)"
             >
-              github
+              <span>github</span>
+              <ArrowUpRight size={14} aria-hidden="true" />
             </a>
             <a
               href={links.x}
-              className="text-stone-400 hover:underline decoration-purple-400 underline-offset-4 transition-all"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="surface-card inline-flex min-h-11 items-center gap-2 px-4 text-(--text-muted) hover:text-(--text)"
             >
-              x
+              <span>x</span>
+              <ArrowUpRight size={14} aria-hidden="true" />
             </a>
             <a
               href={links.discord}
-              className="text-stone-400 hover:underline decoration-purple-400 underline-offset-4 transition-all"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="surface-card inline-flex min-h-11 items-center gap-2 px-4 text-(--text-muted) hover:text-(--text)"
             >
-              discord
+              <span>discord</span>
+              <ArrowUpRight size={14} aria-hidden="true" />
             </a>
             <a
               href={`mailto:${links.email}`}
-              className="text-stone-400 hover:underline decoration-purple-400 underline-offset-4 transition-all"
+              className="surface-card inline-flex min-h-11 items-center gap-2 px-4 text-(--text-muted) hover:text-(--text) break-all"
             >
-              {links.email}
+              <span>{links.email}</span>
+              <ArrowUpRight size={14} aria-hidden="true" />
             </a>
           </div>
         </section>
-
-        {/* 7. Footer */}
-        <footer className="py-12 border-t border-stone-700">
-          <p className="font-mono text-xs text-stone-500">
-            © {new Date().getFullYear()} {person.name} · built in {city}
-          </p>
-        </footer>
       </main>
+
+      <footer className="border-t border-(--border) py-8 sm:py-10">
+        <div className="container-main flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+          <p className="font-mono text-xs text-(--text-subtle)">
+            © 2026 {person.name} · built in {city}
+          </p>
+          <p className="font-mono text-xs text-(--text-subtle)">
+            {person.handle} {"//"} open source
+          </p>
+        </div>
+      </footer>
     </>
   );
 }
