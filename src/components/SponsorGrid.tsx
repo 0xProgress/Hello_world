@@ -1,6 +1,7 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
+import { sponsors } from "@/content/profile";
+import { useState } from "react";
 
 const GithubIcon = () => (
   <svg
@@ -22,84 +23,6 @@ const HeartIcon = () => (
   </svg>
 );
 
-/*
- * Sponsor Template:
- * To add a new sponsor, add an object with:
- * - name: string (sponsor name/handle)
- * - url: string (link to their website/profile)
- * - message: string (heartfelt thank you message, shown in hover modal)
- * - isGithub: boolean (optional, true only for GitHub Education)
- * - isFamily: boolean (optional, true for family acknowledgment)
- * - empty: boolean (optional, true for open slots)
- * - teaser: string (optional, short label shown on empty slot)
- *
- * Example:
- * {
- *   name: "Vercel",
- *   url: "https://vercel.com",
- *   message: "Your support means the world...",
- * }
- */
-
-type Sponsor = {
-  name: string;
-  url: string;
-  message: string;
-  isGithub?: boolean;
-  isFamily?: boolean;
-  empty?: boolean;
-  teaser?: string;
-};
-
-const sponsors: Sponsor[] = [
-  {
-    name: 'My Family',
-    url: '#',
-    message:
-      'To my family, who believed in me before I believed in myself. Your patience, your sacrifices, your quiet encouragement through every late night and every failed attempt. You gave me the space to fail forward, to keep building when it would have been easier to quit. Everything I ship carries a piece of your support. This is for you.',
-    isFamily: true,
-  },
-  {
-    name: 'GitHub Education',
-    url: 'https://education.github.com',
-    message:
-      'A massive shoutout to GitHub Education. The GitHub Student Developer Pack has been an absolute game-changer for my journey as a student building in public. Providing tools of this caliber for free to thousands of developers worldwide is nothing short of incredible. Thank you for backing builders before they even make it.',
-    isGithub: true,
-  },
-  {
-    name: 'waiting for you',
-    url: 'https://github.com/sponsors/0xProgress',
-    message:
-      'This slot is open. Your name, your logo, your link, right here on this page. Every sponsorship is recurring and funds open-source tools built in public. Claim it and join the builders keeping this work alive.',
-    empty: true,
-    teaser: 'waiting for you',
-  },
-  {
-    name: 'your name here',
-    url: 'https://github.com/sponsors/0xProgress',
-    message:
-      'Reserved for someone who believes in shipping in the open. Sponsorship slots are visible to every visitor. Any amount, recurring. Your support directly funds the next CLI, the next patch, the next release.',
-    empty: true,
-    teaser: 'your name here',
-  },
-  {
-    name: 'reserved',
-    url: 'https://github.com/sponsors/0xProgress',
-    message:
-      'This slot is waiting. Sponsor me on GitHub and your name takes this spot permanently. You get a visible link on the site, my eternal thanks, and the knowledge that you helped a student keep building.',
-    empty: true,
-    teaser: 'reserved',
-  },
-  {
-    name: 'coming soon',
-    url: 'https://github.com/sponsors/0xProgress',
-    message:
-      'Open slot. Sponsorships are recurring, any amount, and they go straight into the work. You will be listed here alongside the people who made this portfolio possible. Click to claim.',
-    empty: true,
-    teaser: 'coming soon',
-  }
-];
-
 type HoverState = {
   index: number;
   rect: DOMRect;
@@ -112,19 +35,20 @@ export default function SponsorGrid() {
     left: 0,
   });
 
-  useEffect(() => {
-    if (!hover) return;
-
-    const cardRect = hover.rect;
+  const handleEnter = (
+    index: number,
+    e: React.MouseEvent<HTMLAnchorElement>,
+  ) => {
+    const rect = e.currentTarget.getBoundingClientRect();
     const modalWidth = 320;
     const modalHeight = 240;
     const gap = 12;
 
-    let left = cardRect.right + gap;
-    let top = cardRect.top;
+    let left = rect.right + gap;
+    let top = rect.top;
 
     if (left + modalWidth > window.innerWidth - 16) {
-      left = cardRect.left - modalWidth - gap;
+      left = rect.left - modalWidth - gap;
     }
     if (left < 16) {
       left = 16;
@@ -136,15 +60,8 @@ export default function SponsorGrid() {
       top = 16;
     }
 
-    setModalPos({ top, left });
-  }, [hover]);
-
-  const handleEnter = (
-    index: number,
-    e: React.MouseEvent<HTMLAnchorElement>
-  ) => {
-    const rect = e.currentTarget.getBoundingClientRect();
     setHover({ index, rect });
+    setModalPos({ top, left });
   };
 
   const handleLeave = () => {
@@ -156,41 +73,21 @@ export default function SponsorGrid() {
   return (
     <>
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-        {sponsors.map((sponsor, index) => {
-          if (sponsor.empty) {
-            return (
-              <a
-                key={index}
-                href={sponsor.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                onMouseEnter={(e) => handleEnter(index, e)}
-                onMouseLeave={handleLeave}
-                className="bg-stone-900 border border-dashed border-stone-700 p-6 rounded-sm flex flex-col items-center justify-center min-h-25 hover:border-purple-400 transition-colors group cursor-pointer"
-              >
-                <p className="font-mono text-xs text-stone-500 group-hover:text-stone-400 transition-colors text-center">
-                  {sponsor.teaser}
-                </p>
-              </a>
-            );
-          }
-
-          return (
-            <a
-              key={index}
-              href={sponsor.url}
-              target={sponsor.isFamily ? '_self' : '_blank'}
-              rel={sponsor.isFamily ? undefined : 'noopener noreferrer'}
-              onMouseEnter={(e) => handleEnter(index, e)}
-              onMouseLeave={handleLeave}
-              className="bg-stone-900 border border-stone-700 p-6 rounded-sm flex items-center gap-3 min-h-25 hover:border-purple-400 transition-colors group cursor-pointer"
-            >
-              {sponsor.isGithub && <GithubIcon />}
-              {sponsor.isFamily && <HeartIcon />}
-              <p className="font-mono text-sm text-stone-50">{sponsor.name}</p>
-            </a>
-          );
-        })}
+        {sponsors.map((sponsor, index) => (
+          <a
+            key={index}
+            href={sponsor.url}
+            target={sponsor.isFamily ? "_self" : "_blank"}
+            rel={sponsor.isFamily ? undefined : "noopener noreferrer"}
+            onMouseEnter={(e) => handleEnter(index, e)}
+            onMouseLeave={handleLeave}
+            className="bg-stone-900 border border-stone-700 p-6 rounded-sm flex items-center gap-3 min-h-25 hover:border-purple-400 transition-colors group cursor-pointer"
+          >
+            {sponsor.isGithub && <GithubIcon />}
+            {sponsor.isFamily && <HeartIcon />}
+            <p className="font-mono text-sm text-stone-50">{sponsor.name}</p>
+          </a>
+        ))}
       </div>
 
       {hover && activeSponsor && (
