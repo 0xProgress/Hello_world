@@ -27,8 +27,30 @@ export default function Page() {
   const visiblePosts = getAllPostsMeta().slice(0, 3);
   const stackPills = person.skillsSummary.split("·").map((item) => item.trim());
 
+  const personJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: person.name,
+    alternateName: person.handle,
+    url: links.website,
+    image: `${links.website.replace(/\/$/, "")}/og-image.png`,
+    jobTitle: "Software developer",
+    description: person.metaDescription,
+    knowsAbout: ["Go", "Python", "Backend development", "Open source"],
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: "Lagos",
+      addressCountry: "NG",
+    },
+    sameAs: [links.github, links.x, links.discord],
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+      />
       <SiteHeader handle={person.handle} />
 
       <main id="main-content" className="container-main">
@@ -124,7 +146,7 @@ export default function Page() {
               </p>
               <h2
                 id="work-heading"
-                className="font-serif `text-(length:--text-2xl) text-(--text)"
+                className="font-serif text-(length:--text-2xl) text-(--text)"
               >
                 Work &amp; Open Source
               </h2>
@@ -151,7 +173,7 @@ export default function Page() {
                 </p>
                 <h2
                   id="writing-heading"
-                  className="font-serif `text-(length:--text-2xl) text-(--text)"
+                  className="font-serif text-(length:--text-2xl) text-(--text)"
                 >
                   Latest Writing
                 </h2>
@@ -202,7 +224,7 @@ export default function Page() {
           </p>
           <h2
             id="about-heading"
-            className="font-serif `text-(length:--text-2xl) text-(--text) mb-4 sm:mb-6"
+            className="font-serif text-(length:--text-2xl) text-(--text) mb-4 sm:mb-6"
           >
             Self-taught &amp; shipping in public
           </h2>
@@ -273,7 +295,7 @@ export default function Page() {
           </p>
           <h2
             id="support-heading"
-            className="font-serif `text-(length:--text-2xl) italic text-(--text) mb-3 sm:mb-4"
+            className="font-serif text-(length:--text-2xl) italic text-(--text) mb-3 sm:mb-4"
           >
             &ldquo;Support the work.&rdquo;
           </h2>
@@ -313,7 +335,7 @@ export default function Page() {
           </p>
           <h2
             id="contact-heading"
-            className="font-serif `text-(length:--text-2xl) text-(--text) mb-5 sm:mb-6"
+            className="font-serif text-(length:--text-2xl) text-(--text) mb-5 sm:mb-6"
           >
             &ldquo;Let&apos;s talk.&rdquo;
           </h2>

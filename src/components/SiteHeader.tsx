@@ -1,6 +1,7 @@
 "use client";
 
 import ThemeToggle from "@/components/ThemeToggle";
+import VibeSwitcher from "@/components/VibeSwitcher";
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -78,18 +79,18 @@ export default function SiteHeader({ handle }: { handle: string }) {
   return (
     <>
       <header className="sticky top-0 z-40 border-b border-(--border) bg-(--bg)/85 backdrop-blur-md">
-        <div className="container-main flex h-16 items-center justify-between gap-4">
+        <div className="container-main flex h-16 items-center justify-between gap-2 sm:gap-4">
           <Link
             href="/"
-            className="inline-flex min-h-11 items-center gap-2 font-mono text-sm font-medium text-(--text)"
+            className="inline-flex min-h-11 items-center gap-2 font-mono text-sm font-medium text-(--text) truncate"
           >
             <span className="text-(--accent)" aria-hidden="true">
               ~/
             </span>
-            <span>{handle}</span>
+            <span className="truncate">{handle}</span>
             <span
               aria-hidden="true"
-              className="inline-block h-4 w-1.5 bg-(--accent) animate-blink"
+              className="inline-block h-4 w-1.5 shrink-0 bg-(--accent) animate-blink"
             />
           </Link>
 
@@ -120,13 +121,15 @@ export default function SiteHeader({ handle }: { handle: string }) {
                 );
               })}
             </div>
-            <div className="ml-2">
+            <div className="ml-2 flex items-center gap-1.5">
+              <VibeSwitcher />
               <ThemeToggle />
             </div>
           </nav>
 
           {/* Mobile Controls (>= 44px touch targets) */}
-          <div className="flex items-center gap-2 md:hidden">
+          <div className="flex items-center gap-1.5 md:hidden shrink-0">
+            <VibeSwitcher />
             <ThemeToggle />
             <button
               type="button"

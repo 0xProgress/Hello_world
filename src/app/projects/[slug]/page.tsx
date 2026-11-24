@@ -1,17 +1,17 @@
-import type { Metadata } from 'next';
-import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import PostContent from "@/components/PostContent";
+import SiteHeader from "@/components/SiteHeader";
+import { links, person, projects } from "@/content/profile";
+import { getAllPostsMeta, highlightSnippet } from "@/lib/posts";
 import {
   ArrowLeft,
   ArrowUpRight,
   BookOpen,
   GitBranch,
   Package,
-} from 'lucide-react';
-import SiteHeader from '@/components/SiteHeader';
-import PostContent from '@/components/PostContent';
-import { person, projects } from '@/content/profile';
-import { getAllPostsMeta, highlightSnippet } from '@/lib/posts';
+} from "lucide-react";
+import type { Metadata } from "next";
+import Link from "next/link";
+import { notFound } from "next/navigation";
 
 export const dynamicParams = false;
 
@@ -28,6 +28,8 @@ export async function generateMetadata({
   const project = projects.find((p) => p.slug === slug);
   if (!project) return {};
 
+  const ogImageUrl = `/projects/${project.slug}/opengraph-image`;
+
   return {
     title: project.name,
     description: project.summary,
@@ -35,9 +37,18 @@ export async function generateMetadata({
       canonical: `/projects/${project.slug}`,
     },
     openGraph: {
-      type: 'website',
+      type: "website",
       title: `${project.name} — ${person.handle}`,
       description: project.summary,
+      images: [
+        { url: ogImageUrl, width: 1200, height: 630, alt: project.name },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${project.name} — ${person.handle}`,
+      description: project.summary,
+      images: [ogImageUrl],
     },
   };
 }
@@ -56,18 +67,43 @@ export default async function ProjectPage({
 
   const snippetHtml = await highlightSnippet(
     project.installSnippet,
-    project.installLang
+    project.installLang,
   );
 
   const projectTags = new Set(project.tags.map((t) => t.toLowerCase()));
   const relatedPosts = getAllPostsMeta().filter((post) =>
-    post.tags.some((tag) => projectTags.has(tag.toLowerCase()))
+    post.tags.some((tag) => projectTags.has(tag.toLowerCase())),
   );
 
-  const city = person.location.split(',')[0]?.trim() ?? person.location;
+  const siteUrl = links.website.replace(/\/$/, "");
+  const projectUrl = `${siteUrl}/projects/${project.slug}`;
+
+  const softwareSourceCodeJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareSourceCode",
+    name: project.name,
+    description: project.summary,
+    url: projectUrl,
+    codeRepository: project.repoUrl,
+    programmingLanguage: project.programmingLanguage,
+    ...(project.license ? { license: project.license } : {}),
+    author: {
+      "@type": "Person",
+      name: person.name,
+      url: links.website,
+    },
+  };
+
+  const city = person.location.split(",")[0]?.trim() ?? person.location;
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(softwareSourceCodeJsonLd),
+        }}
+      />
       <SiteHeader handle={person.handle} />
 
       <main id="main-content" className="container-main pt-10 pb-20 sm:pt-16">
@@ -87,8 +123,8 @@ export default async function ProjectPage({
             <span
               className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 font-mono text-[11px]"
               style={{
-                backgroundColor: 'var(--status-active-bg)',
-                color: 'var(--status-active)',
+                backgroundColor: "var(--status-active-bg)",
+                color: "var(--status-active)",
               }}
             >
               <span
@@ -173,7 +209,7 @@ export default async function ProjectPage({
                 aria-hidden="true"
                 className="text-(--accent)"
               />
-              <span>{project.packageLabel ?? 'Package Registry'}</span>
+              <span>{project.packageLabel ?? "Package Registry"}</span>
               <ArrowUpRight size={14} aria-hidden="true" />
             </a>
           )}
@@ -185,7 +221,7 @@ export default async function ProjectPage({
           className="surface-panel p-5 sm:p-7 mb-10"
         >
           <p className="font-mono text-[11px] uppercase tracking-widest text-(--accent) mb-2">
-            01 {'//'} Problem Statement
+            01 {"//"} Problem Statement
           </p>
           <h2
             id="problem-heading"
@@ -201,7 +237,7 @@ export default async function ProjectPage({
         {/* Install / Usage Snippet */}
         <section aria-labelledby="install-heading" className="mb-12 min-w-0">
           <p className="font-mono text-[11px] uppercase tracking-widest text-(--accent) mb-2">
-            02 {'//'} Quickstart
+            02 {"//"} Quickstart
           </p>
           <h2
             id="install-heading"
@@ -220,7 +256,7 @@ export default async function ProjectPage({
           <div className="flex flex-wrap items-baseline justify-between gap-2 mb-5">
             <div>
               <p className="font-mono text-[11px] uppercase tracking-widest text-(--accent) mb-1">
-                03 {'//'} Field Notes
+                03 {"//"} Field Notes
               </p>
               <h2
                 id="related-posts-heading"
@@ -240,7 +276,7 @@ export default async function ProjectPage({
 
           {relatedPosts.length === 0 ? (
             <p className="font-mono text-xs text-(--text-subtle)">
-              No posts tagged with {project.tags.map((t) => `#${t}`).join(', ')}{' '}
+              No posts tagged with {project.tags.map((t) => `#${t}`).join(", ")}{" "}
               yet.
             </p>
           ) : (
@@ -277,7 +313,7 @@ export default async function ProjectPage({
             © 2026 {person.name} · built in {city}
           </p>
           <p className="font-mono text-xs text-(--text-subtle)">
-            {person.handle} {'//'} open source
+            {person.handle} {"//"} open source
           </p>
         </div>
       </footer>

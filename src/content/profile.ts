@@ -7,6 +7,8 @@ export interface Project {
   problem: string;
   status: ProjectStatus;
   tags: string[];
+  programmingLanguage: string;
+  license?: string;
   installSnippet: string;
   installLang: string;
   repoUrl: string;
@@ -84,15 +86,7 @@ export const person: PersonProfile = {
     name: "Lagos State University of Education",
     alternateName: "LASUED",
   },
-  knowsAbout: [
-    "Go",
-    "Python",
-    "Bash",
-    "Backend Development",
-    "CLI Tools",
-    "Open Source",
-    "DevOps",
-  ],
+  knowsAbout: ["Go", "Python", "Backend development", "Open source"],
 };
 
 export const nowItems: NowItem[] = [
@@ -122,6 +116,8 @@ export const projects: Project[] = [
       "Replacing fragile sleep loops in CI and local scripts usually means adopting a polling wrapper that only says 'timed out' when something hangs. waitfor checks TCP ports, HTTP endpoints, files, processes, and shell commands in parallel—and prints the exact failure state and diagnostic hint when a check fails.",
     status: "active",
     tags: ["go", "cli", "devtools"],
+    programmingLanguage: "Go",
+    license: "https://opensource.org/licenses/MIT",
     installLang: "bash",
     installSnippet: `go install github.com/0xProgress/waitfor@latest
 
@@ -141,6 +137,8 @@ waitfor all --timeout 30s port 5432 http localhost:8080/health`,
       "Sharing multi-file context with an AI chat, bug report, or gist usually requires manually copying files one by one or accidentally pasting build artifacts and binaries. clippy walks a directory as a single zero-dependency Bash script, respects nested .gitignore rules, skips binary files, and puts a structured Markdown bundle with a table of contents straight onto your X11 clipboard.",
     status: "active",
     tags: ["bash", "cli", "utility"],
+    programmingLanguage: "Bash",
+    license: "https://opensource.org/licenses/MIT",
     installLang: "bash",
     installSnippet: `git clone https://github.com/0xProgress/clippy.git
 cd clippy && mkdir -p ~/.local/bin
@@ -162,6 +160,7 @@ clippy`,
       "Free KataBump servers expire every four days unless manually renewed inside a narrow two-day window, and existing automation scripts silently marked crashes and bad credentials as successes. automatic-dollop runs daily via Chrome DevTools Protocol on GitHub Actions, renews every server per account, reports explicit outcomes, and sends Telegram alerts when manual intervention is needed.",
     status: "active",
     tags: ["javascript", "automation", "cron"],
+    programmingLanguage: "JavaScript",
     installLang: "bash",
     installSnippet: `# Run locally with Node.js & Chrome CDP
 git clone https://github.com/0xProgress/automatic-dollop.git
@@ -181,6 +180,8 @@ node renew.js`,
       "Students and indie builders shipping portfolios, documentation sites, and open-source demos often hit a paywall just to get a clean, recognizable domain name. As a maintainer on is-a.dev, I help review DNS record pull requests and keep the automated Git-backed subdomain service dependable for thousands of developers worldwide.",
     status: "active",
     tags: ["dns", "open-source", "community"],
+    programmingLanguage: "JSON",
+    license: "https://opensource.org/licenses/MIT",
     installLang: "json",
     installSnippet: `{
   "owner": {
