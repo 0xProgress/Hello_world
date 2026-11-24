@@ -1,9 +1,9 @@
 'use client';
 
-import { useRef, useState } from 'react';
-import Link from 'next/link';
-import { ArrowUpRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import type { Project } from '@/content/profile';
+import { ArrowUpRight, ChevronLeft, ChevronRight } from 'lucide-react';
+import Link from 'next/link';
+import { useRef, useState } from 'react';
 
 export default function ProjectGrid({ projects }: { projects: Project[] }) {
   const trackRef = useRef<HTMLDivElement>(null);
@@ -32,7 +32,9 @@ export default function ProjectGrid({ projects }: { projects: Project[] }) {
 
     for (let i = 0; i < track.children.length; i++) {
       const child = track.children[i] as HTMLElement;
-      const distance = Math.abs(child.offsetLeft - track.offsetLeft - scrollLeft);
+      const distance = Math.abs(
+        child.offsetLeft - track.offsetLeft - scrollLeft
+      );
       if (distance < minDistance) {
         minDistance = distance;
         closestIndex = i;
@@ -106,7 +108,7 @@ export default function ProjectGrid({ projects }: { projects: Project[] }) {
         {projects.map((project, idx) => (
           <Link
             key={project.slug}
-            href={`/work/${project.slug}`}
+            href={`/projects/${project.slug}`}
             className="surface-card group flex min-h-48 w-[85%] shrink-0 snap-start flex-col justify-between p-5 sm:p-6 md:min-h-54 md:w-auto md:shrink md:p-7"
           >
             <div>

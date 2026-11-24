@@ -4,7 +4,7 @@ import ProjectGrid from "@/components/ProjectGrid";
 import SiteHeader from "@/components/SiteHeader";
 import SponsorGrid from "@/components/SponsorGrid";
 import StatCard from "@/components/StatCard";
-import { links, person, projects } from "@/content/profile";
+import { links, nowItems, person, projects } from "@/content/profile";
 import { getAllPostsMeta } from "@/lib/posts";
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
@@ -56,7 +56,7 @@ export default function Page() {
 
               <h1
                 id="hero-heading"
-                className="font-serif text-(length:--text-hero) text-(--text) hover-wonk mb-4 sm:mb-5 leading-[1.08] tracking-tight"
+                className="font-serif `text-(length:--text-hero) text-(--text) hover-wonk mb-4 sm:mb-5 leading-[1.08] tracking-tight"
               >
                 &ldquo;{person.tagline}&rdquo;
               </h1>
@@ -124,7 +124,7 @@ export default function Page() {
               </p>
               <h2
                 id="work-heading"
-                className="font-serif text-(length:--text-2xl) text-(--text)"
+                className="font-serif `text-(length:--text-2xl) text-(--text)"
               >
                 Work &amp; Open Source
               </h2>
@@ -151,7 +151,7 @@ export default function Page() {
                 </p>
                 <h2
                   id="writing-heading"
-                  className="font-serif text-(length:--text-2xl) text-(--text)"
+                  className="font-serif `text-(length:--text-2xl) text-(--text)"
                 >
                   Latest Writing
                 </h2>
@@ -191,7 +191,7 @@ export default function Page() {
           </section>
         )}
 
-        {/* 4. About */}
+        {/* 4. About & Now */}
         <section
           id="about"
           aria-labelledby="about-heading"
@@ -202,7 +202,7 @@ export default function Page() {
           </p>
           <h2
             id="about-heading"
-            className="font-serif text-(length:--text-2xl) text-(--text) mb-4 sm:mb-6"
+            className="font-serif `text-(length:--text-2xl) text-(--text) mb-4 sm:mb-6"
           >
             Self-taught &amp; shipping in public
           </h2>
@@ -221,10 +221,45 @@ export default function Page() {
             projects={projects}
           />
 
-          <p className="font-mono text-xs text-(--text-subtle) flex items-center gap-2">
+          <p className="font-mono text-xs text-(--text-subtle) flex items-center gap-2 mb-10 sm:mb-12">
             <GithubMark />
             <span>{person.educationNote}</span>
           </p>
+
+          {/* Now Sub-section */}
+          {nowItems.length > 0 && (
+            <div
+              aria-labelledby="now-heading"
+              className="surface-panel p-5 sm:p-6"
+            >
+              <div className="flex items-center justify-between gap-2 mb-4">
+                <h3
+                  id="now-heading"
+                  className="font-mono text-xs uppercase tracking-wider text-(--accent)"
+                >
+                  Now {"//"} Current Focus
+                </h3>
+                <span className="font-mono text-[11px] text-(--text-subtle)">
+                  updated Nov 2026
+                </span>
+              </div>
+              <ul className="space-y-3">
+                {nowItems.map((item) => (
+                  <li
+                    key={item.label}
+                    className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-3 text-sm"
+                  >
+                    <span className="font-mono text-xs font-medium text-(--text) shrink-0">
+                      → {item.label}:
+                    </span>
+                    <span className="text-(--text-muted) leading-relaxed">
+                      {item.detail}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </section>
 
         {/* 5. Support */}
@@ -238,7 +273,7 @@ export default function Page() {
           </p>
           <h2
             id="support-heading"
-            className="font-serif text-(length:--text-2xl) italic text-(--text) mb-3 sm:mb-4"
+            className="font-serif `text-(length:--text-2xl) italic text-(--text) mb-3 sm:mb-4"
           >
             &ldquo;Support the work.&rdquo;
           </h2>
@@ -278,7 +313,7 @@ export default function Page() {
           </p>
           <h2
             id="contact-heading"
-            className="font-serif text-(length:--text-2xl) text-(--text) mb-5 sm:mb-6"
+            className="font-serif `text-(length:--text-2xl) text-(--text) mb-5 sm:mb-6"
           >
             &ldquo;Let&apos;s talk.&rdquo;
           </h2>

@@ -4,12 +4,21 @@ export interface Project {
   slug: string;
   name: string;
   summary: string;
+  problem: string;
   status: ProjectStatus;
   tags: string[];
+  installSnippet: string;
+  installLang: string;
   repoUrl: string;
   docsUrl?: string;
   packageUrl?: string;
+  packageLabel?: string;
   role?: string;
+}
+
+export interface NowItem {
+  label: string;
+  detail: string;
 }
 
 export interface Sponsor {
@@ -63,7 +72,7 @@ export const person: PersonProfile = {
     "CS student in Lagos. No internships, no employer, just 4+ years of studying and shipping. Behind the scenes is a classic developer graveyard of half-built ideas, but everything I actually ship is open source.",
   metaDescription:
     "CS student in Lagos building small tools that punch above their weight. Open source CLI tools, backend development, and developer utilities. Creator of waitfor, clippy, and is-a.dev maintainer.",
-  skillsSummary: "Go · Python · Backend · OSS",
+  skillsSummary: "Go · Python · Bash · Backend · OSS",
   terminalLines: [
     "self-taught. ships real things.",
     "Boot.dev → Go mastery in progress.",
@@ -78,6 +87,7 @@ export const person: PersonProfile = {
   knowsAbout: [
     "Go",
     "Python",
+    "Bash",
     "Backend Development",
     "CLI Tools",
     "Open Source",
@@ -85,40 +95,106 @@ export const person: PersonProfile = {
   ],
 };
 
+export const nowItems: NowItem[] = [
+  {
+    label: "Go & CLI Tooling",
+    detail:
+      "Hardening cross-platform releases and failure diagnostics for waitfor while sharpening concurrency patterns through Boot.dev.",
+  },
+  {
+    label: "is-a.dev Maintenance",
+    detail:
+      "Reviewing subdomain pull requests, validating DNS records, and keeping community infrastructure reliable for thousands of developers.",
+  },
+  {
+    label: "Building in Public",
+    detail:
+      "Turning private developer-graveyard experiments into small, zero-bloat open-source utilities and documenting the process in /writing.",
+  },
+];
+
 export const projects: Project[] = [
   {
     slug: "waitfor",
     name: "waitfor",
-    summary: "Blocks until a condition is true. Tells you why it failed.",
+    summary: "Blocks until a condition is true, or tells you why it wasn't.",
+    problem:
+      "Replacing fragile sleep loops in CI and local scripts usually means adopting a polling wrapper that only says 'timed out' when something hangs. waitfor checks TCP ports, HTTP endpoints, files, processes, and shell commands in parallel—and prints the exact failure state and diagnostic hint when a check fails.",
     status: "active",
     tags: ["go", "cli", "devtools"],
+    installLang: "bash",
+    installSnippet: `go install github.com/0xProgress/waitfor@latest
+
+# Wait for Postgres & an HTTP health check at once
+waitfor all --timeout 30s port 5432 http localhost:8080/health`,
     repoUrl: "https://github.com/0xProgress/waitfor",
-    docsUrl: "https://github.com/0xProgress/waitfor#install",
+    docsUrl: "https://github.com/0xProgress/waitfor/blob/main/docs/ci-cd.md",
+    packageUrl: "https://pkg.go.dev/github.com/0xProgress/waitfor",
+    packageLabel: "pkg.go.dev",
   },
   {
     slug: "clippy",
     name: "clippy",
-    summary: "Lightweight clipboard utility for the terminal.",
+    summary:
+      "Copy an entire project to your clipboard as one clean Markdown document.",
+    problem:
+      "Sharing multi-file context with an AI chat, bug report, or gist usually requires manually copying files one by one or accidentally pasting build artifacts and binaries. clippy walks a directory as a single zero-dependency Bash script, respects nested .gitignore rules, skips binary files, and puts a structured Markdown bundle with a table of contents straight onto your X11 clipboard.",
     status: "active",
-    tags: ["go", "cli", "utility"],
+    tags: ["bash", "cli", "utility"],
+    installLang: "bash",
+    installSnippet: `git clone https://github.com/0xProgress/clippy.git
+cd clippy && mkdir -p ~/.local/bin
+cp clippy ~/.local/bin/clippy && chmod +x ~/.local/bin/clippy
+
+# Copy the current repo to your clipboard
+clippy`,
     repoUrl: "https://github.com/0xProgress/clippy",
+    docsUrl: "https://github.com/0xProgress/clippy#usage",
+    packageUrl: "https://github.com/0xProgress/clippy/releases",
+    packageLabel: "GitHub Releases",
   },
   {
     slug: "automatic-dollop",
     name: "automatic-dollop",
-    summary: "Automation and developer workflow utilities.",
+    summary:
+      "Daily GitHub Actions cron job that renews free KataBump servers before expiry.",
+    problem:
+      "Free KataBump servers expire every four days unless manually renewed inside a narrow two-day window, and existing automation scripts silently marked crashes and bad credentials as successes. automatic-dollop runs daily via Chrome DevTools Protocol on GitHub Actions, renews every server per account, reports explicit outcomes, and sends Telegram alerts when manual intervention is needed.",
     status: "active",
-    tags: ["go", "automation", "devtools"],
+    tags: ["javascript", "automation", "cron"],
+    installLang: "bash",
+    installSnippet: `# Run locally with Node.js & Chrome CDP
+git clone https://github.com/0xProgress/automatic-dollop.git
+cd automatic-dollop && npm ci
+echo '[{"username":"you@example.com","password":"yourpass"}]' > login.json
+node renew.js`,
     repoUrl: "https://github.com/0xProgress/automatic-dollop",
+    docsUrl: "https://github.com/0xProgress/automatic-dollop#cloud-recommended",
+    packageUrl: "https://github.com/0xProgress/automatic-dollop/actions",
+    packageLabel: "GitHub Actions",
   },
   {
     slug: "is-a-dev",
     name: "is-a.dev",
     summary: "Free subdomains for developers. Thousands rely on it.",
+    problem:
+      "Students and indie builders shipping portfolios, documentation sites, and open-source demos often hit a paywall just to get a clean, recognizable domain name. As a maintainer on is-a.dev, I help review DNS record pull requests and keep the automated Git-backed subdomain service dependable for thousands of developers worldwide.",
     status: "active",
     tags: ["dns", "open-source", "community"],
+    installLang: "json",
+    installSnippet: `{
+  "owner": {
+    "username": "0xProgress",
+    "email": "progressuwhuseba@gmail.com"
+  },
+  "records": {
+    "CNAME": "0xprogress.github.io"
+  }
+}`,
     repoUrl: "https://github.com/is-a-dev/register",
     docsUrl: "https://is-a.dev",
+    packageUrl: "https://github.com/is-a-dev/register/pulls",
+    packageLabel: "Registry PRs",
     role: "maintainer",
   },
 ];

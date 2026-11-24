@@ -1,8 +1,8 @@
 import SiteHeader from "@/components/SiteHeader";
 import WritingList from "@/components/WritingList";
-import { person } from "@/content/profile";
+import { person, projects } from "@/content/profile";
 import { getAllPostsMeta } from "@/lib/posts";
-import { Rss } from "lucide-react";
+import { ArrowUpRight, Rss } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 
@@ -24,7 +24,7 @@ export default function WritingPage() {
       <SiteHeader handle={person.handle} />
 
       <main id="main-content" className="container-main pt-12 pb-20 sm:pt-20">
-        <div className="mb-10 flex flex-wrap items-end justify-between gap-4 border-b border-(--border) pb-8">
+        <div className="mb-8 flex flex-wrap items-end justify-between gap-4 border-b border-(--border) pb-8">
           <div>
             <p className="font-mono text-[11px] uppercase tracking-widest text-(--accent) mb-2">
               Logs &amp; Engineering Notes
@@ -50,6 +50,51 @@ export default function WritingPage() {
             </Link>
           </div>
         </div>
+
+        {/* Project Specs Quick-Index */}
+        <section
+          aria-labelledby="writing-projects-heading"
+          className="mb-10 border-b border-(--border) pb-8"
+        >
+          <div className="flex items-center justify-between gap-2 mb-3">
+            <h2
+              id="writing-projects-heading"
+              className="font-mono text-[11px] uppercase tracking-wider text-(--text-subtle)"
+            >
+              Project Specs &amp; Docs
+            </h2>
+            <span className="font-mono text-[11px] text-(--text-subtle)">
+              0{projects.length} tools
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+            {projects.map((project, idx) => (
+              <Link
+                key={project.slug}
+                href={`/projects/${project.slug}`}
+                className="surface-card group flex min-h-12 items-center justify-between gap-2 px-3.5 py-2.5"
+              >
+                <div className="min-w-0">
+                  <p className="font-mono text-xs font-medium text-(--text) group-hover:text-(--accent) transition-colors truncate">
+                    <span className="text-(--text-subtle) mr-1.5">
+                      0{idx + 1}
+                    </span>
+                    {project.name}
+                  </p>
+                  <p className="font-mono text-[11px] text-(--text-subtle) truncate">
+                    {project.tags.slice(0, 2).join(" · ")}
+                  </p>
+                </div>
+                <ArrowUpRight
+                  size={14}
+                  aria-hidden="true"
+                  className="shrink-0 text-(--text-subtle) transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-(--accent)"
+                />
+              </Link>
+            ))}
+          </div>
+        </section>
 
         <WritingList posts={posts} />
       </main>

@@ -1,14 +1,14 @@
+import matter from 'gray-matter';
 import fs from 'node:fs';
 import path from 'node:path';
-import matter from 'gray-matter';
-import { unified } from 'unified';
-import remarkParse from 'remark-parse';
-import remarkGfm from 'remark-gfm';
-import remarkRehype from 'remark-rehype';
-import rehypeSlug from 'rehype-slug';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
+import rehypeSlug from 'rehype-slug';
 import rehypeStringify from 'rehype-stringify';
+import remarkGfm from 'remark-gfm';
+import remarkParse from 'remark-parse';
+import remarkRehype from 'remark-rehype';
 import { createHighlighter, type Highlighter } from 'shiki';
+import { unified } from 'unified';
 
 const POSTS_DIR = path.join(process.cwd(), 'content', 'posts');
 
@@ -179,6 +179,27 @@ function getShikiHighlighter(): Promise<Highlighter> {
     });
   }
   return highlighterPromise;
+}
+
+export async function highlightSnippet(
+  code: string,
+  rawLang = 'bash'
+): Promise<string> {
+  const highlighter = await getShikiHighlighter();
+  const loadedLangs = new Set(highlighter.getLoadedLanguages());
+  const normalizedLang = rawLang.toLowerCase();
+  const lang = loadedLangs.has(normalizedLang) ? normalizedLang : 'text';
+
+  const highlighted = highlighter.codeToHtml(code.trim(), {
+    lang,
+    themes: {
+      light: 'github-light',
+      dark: 'github-dark-dimmed',
+    },
+    defaultColor: false,
+  });
+
+  return `<div class="code-block-wrapper" data-lang="${normalizedLang}">${highlighted}</div>`;
 }
 
 async function highlightCodeBlocks(html: string): Promise<string> {
