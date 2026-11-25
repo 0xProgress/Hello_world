@@ -30,7 +30,7 @@ export default function SponsorGrid() {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
       {sponsors.map((sponsor, index) => {
         const isExpanded = expandedIndex === index;
         const noteId = `sponsor-note-${index}`;
@@ -38,52 +38,54 @@ export default function SponsorGrid() {
         return (
           <article
             key={sponsor.name}
-            className="surface-card p-6 flex flex-col"
+            className="surface-card p-7 sm:p-9 flex flex-col justify-between"
           >
-            <div className="flex items-center justify-between gap-3">
-              <div className="flex items-center gap-3 min-w-0">
-                {sponsor.icon === "github" && <GithubIcon />}
-                {sponsor.icon === "family" && <HeartIcon />}
-                {sponsor.url ? (
-                  <a
-                    href={sponsor.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex min-h-11 items-center gap-1.5 font-mono text-sm font-medium text-(--text) hover:text-(--accent) transition-colors"
-                  >
-                    <span>{sponsor.name}</span>
-                    <ArrowUpRight
-                      size={14}
-                      aria-hidden="true"
-                      className="text-(--text-subtle)"
-                    />
-                  </a>
-                ) : (
-                  <span className="inline-flex min-h-11 items-center font-mono text-sm font-medium text-(--text)">
-                    {sponsor.name}
-                  </span>
-                )}
+            <div>
+              <div className="flex items-center justify-between gap-3 mb-5">
+                <div className="flex items-center gap-3 min-w-0">
+                  {sponsor.icon === "github" && <GithubIcon />}
+                  {sponsor.icon === "family" && <HeartIcon />}
+                  {sponsor.url ? (
+                    <a
+                      href={sponsor.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex min-h-11 items-center gap-1.5 font-serif text-xl text-(--text) hover:text-(--accent) transition-colors"
+                    >
+                      <span>{sponsor.name}</span>
+                      <ArrowUpRight
+                        size={15}
+                        aria-hidden="true"
+                        className="text-(--text-subtle)"
+                      />
+                    </a>
+                  ) : (
+                    <span className="inline-flex min-h-11 items-center font-serif text-xl text-(--text)">
+                      {sponsor.name}
+                    </span>
+                  )}
+                </div>
+
+                <button
+                  type="button"
+                  aria-expanded={isExpanded}
+                  aria-controls={noteId}
+                  onClick={() => setExpandedIndex(isExpanded ? null : index)}
+                  className="inline-flex min-h-11 shrink-0 items-center rounded-md px-3 font-mono text-xs text-(--text-subtle) hover:bg-(--accent-soft) hover:text-(--accent) transition-colors"
+                >
+                  {isExpanded ? "less" : "read more"}
+                </button>
               </div>
 
-              <button
-                type="button"
-                aria-expanded={isExpanded}
-                aria-controls={noteId}
-                onClick={() => setExpandedIndex(isExpanded ? null : index)}
-                className="inline-flex min-h-11 shrink-0 items-center rounded-sm px-2.5 font-mono text-xs text-(--text-subtle) hover:bg-(--accent-soft) hover:text-(--accent) transition-colors"
+              <p
+                id={noteId}
+                className={`text-base leading-[1.75] text-(--text-muted) ${
+                  isExpanded ? "block" : "line-clamp-3"
+                }`}
               >
-                {isExpanded ? "hide note" : "read note"}
-              </button>
+                {sponsor.message}
+              </p>
             </div>
-
-            <p
-              id={noteId}
-              className={`mt-3 border-t border-(--border) pt-3 text-sm leading-relaxed text-(--text-muted) ${
-                isExpanded ? "block" : "line-clamp-2"
-              }`}
-            >
-              {sponsor.message}
-            </p>
           </article>
         );
       })}

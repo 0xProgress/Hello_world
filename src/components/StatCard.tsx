@@ -24,40 +24,31 @@ export default function StatCard({ projectCount }: { projectCount: number }) {
   const display = error || total === null ? "—" : total.toLocaleString();
 
   return (
-    <div className="surface-panel grid grid-cols-2 sm:grid-cols-3 divide-(--border)">
-      <div className="border-r border-b sm:border-b-0 border-(--border) p-4 sm:p-6">
-        <p className="font-mono text-[10px] sm:text-[11px] uppercase tracking-wider text-(--text-subtle) mb-1.5">
-          Contributions
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-10 border-y border-(--border) py-8 sm:py-10">
+      <div>
+        <p className="font-serif text-3xl sm:text-4xl text-(--text) tabular-nums mb-1.5">
+          {display}
         </p>
-        <p className="font-mono text-xl sm:text-3xl font-medium tabular-nums text-(--text)">
-          {display}{" "}
-          <span className="block sm:inline text-xs sm:text-sm font-normal text-(--text-muted)">
-            commits
-          </span>
+        <p className="font-mono text-xs text-(--text-subtle)">
+          GitHub contributions
         </p>
       </div>
 
-      <div className="border-b sm:border-b-0 sm:border-r border-(--border) p-4 sm:p-6">
-        <p className="font-mono text-[10px] sm:text-[11px] uppercase tracking-wider text-(--text-subtle) mb-1.5">
-          Shipped OSS
+      <div>
+        <p className="font-serif text-3xl sm:text-4xl text-(--text) tabular-nums mb-1.5">
+          {projectCount}
         </p>
-        <p className="font-mono text-xl sm:text-3xl font-medium tabular-nums text-(--text)">
-          {projectCount}{" "}
-          <span className="block sm:inline text-xs sm:text-sm font-normal text-(--text-muted)">
-            public repos
-          </span>
+        <p className="font-mono text-xs text-(--text-subtle)">
+          Public open-source tools
         </p>
       </div>
 
-      <div className="col-span-2 sm:col-span-1 p-4 sm:p-6">
-        <p className="font-mono text-[10px] sm:text-[11px] uppercase tracking-wider text-(--text-subtle) mb-1.5">
-          Track Record
+      <div>
+        <p className="font-serif text-3xl sm:text-4xl text-(--text) tabular-nums mb-1.5">
+          4+ yrs
         </p>
-        <p className="font-mono text-xl sm:text-3xl font-medium tabular-nums text-(--text)">
-          4+{" "}
-          <span className="text-xs sm:text-sm font-normal text-(--text-muted)">
-            yrs studying &amp; shipping
-          </span>
+        <p className="font-mono text-xs text-(--text-subtle)">
+          Studying &amp; shipping in public
         </p>
       </div>
     </div>

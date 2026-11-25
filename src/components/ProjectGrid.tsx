@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import type { Project } from '@/content/profile';
-import { ArrowUpRight, ChevronLeft, ChevronRight } from 'lucide-react';
-import Link from 'next/link';
-import { useRef, useState } from 'react';
+import type { Project } from "@/content/profile";
+import { ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
+import Link from "next/link";
+import { useRef, useState } from "react";
 
 export default function ProjectGrid({ projects }: { projects: Project[] }) {
   const trackRef = useRef<HTMLDivElement>(null);
@@ -17,7 +17,7 @@ export default function ProjectGrid({ projects }: { projects: Project[] }) {
     if (child) {
       track.scrollTo({
         left: child.offsetLeft - track.offsetLeft,
-        behavior: 'smooth',
+        behavior: "smooth",
       });
     }
     setActiveIndex(bounded);
@@ -33,7 +33,7 @@ export default function ProjectGrid({ projects }: { projects: Project[] }) {
     for (let i = 0; i < track.children.length; i++) {
       const child = track.children[i] as HTMLElement;
       const distance = Math.abs(
-        child.offsetLeft - track.offsetLeft - scrollLeft
+        child.offsetLeft - track.offsetLeft - scrollLeft,
       );
       if (distance < minDistance) {
         minDistance = distance;
@@ -49,11 +49,11 @@ export default function ProjectGrid({ projects }: { projects: Project[] }) {
   return (
     <div>
       {/* Mobile Deck Controls (< 768px) */}
-      <div className="mb-3 flex items-center justify-between gap-2 md:hidden">
+      <div className="mb-4 flex items-center justify-between gap-2 md:hidden">
         <div
           role="tablist"
           aria-label="Project cards"
-          className="flex items-center gap-1"
+          className="flex items-center gap-1.5"
         >
           {projects.map((project, idx) => {
             const isSelected = activeIndex === idx;
@@ -67,8 +67,8 @@ export default function ProjectGrid({ projects }: { projects: Project[] }) {
                 onClick={() => scrollToCard(idx)}
                 className={`inline-flex h-11 min-w-11 items-center justify-center rounded-md border font-mono text-xs transition-colors ${
                   isSelected
-                    ? 'border-(--accent-border) bg-(--accent-soft) text-(--accent) font-medium'
-                    : 'border-(--border) bg-(--surface) text-(--text-subtle)'
+                    ? "border-(--accent-border) bg-(--accent-soft) text-(--accent) font-medium"
+                    : "border-(--border) bg-(--surface) text-(--text-subtle)"
                 }`}
               >
                 0{idx + 1}
@@ -77,7 +77,7 @@ export default function ProjectGrid({ projects }: { projects: Project[] }) {
           })}
         </div>
 
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1.5">
           <button
             type="button"
             onClick={() => scrollToCard(activeIndex - 1)}
@@ -99,30 +99,26 @@ export default function ProjectGrid({ projects }: { projects: Project[] }) {
         </div>
       </div>
 
-      {/* Horizontal Snap Carousel on Mobile (< 768px) -> 2x2 Grid on Tablet/Desktop (>= 768px) */}
+      {/* Horizontal Snap Carousel on Mobile -> Airy 2x2 Grid on Desktop */}
       <div
         ref={trackRef}
         onScroll={handleScroll}
-        className="no-scrollbar flex snap-x snap-mandatory gap-4 overflow-x-auto pb-1 md:grid md:grid-cols-2 md:gap-5 md:overflow-visible md:pb-0"
+        className="no-scrollbar flex snap-x snap-mandatory gap-6 overflow-x-auto pb-1 md:grid md:grid-cols-2 md:gap-8 md:overflow-visible md:pb-0"
       >
-        {projects.map((project, idx) => (
+        {projects.map((project) => (
           <Link
             key={project.slug}
             href={`/projects/${project.slug}`}
-            className="surface-card group flex min-h-48 w-[85%] shrink-0 snap-start flex-col justify-between p-5 sm:p-6 md:min-h-54 md:w-auto md:shrink md:p-7"
+            className="surface-card group flex min-h-64 w-[86%] shrink-0 snap-start flex-col justify-between p-7 sm:p-9 md:min-h-72 md:w-auto md:shrink lg:p-11"
           >
             <div>
-              {/* Top telemetry row */}
-              <div className="flex items-center justify-between gap-2 mb-4 md:mb-5">
-                <span className="font-mono text-xs text-(--text-subtle)">
-                  0{idx + 1} {'//'} {project.slug}
-                </span>
-                <div className="flex items-center gap-2">
+              <div className="flex items-center justify-between gap-3 mb-6">
+                <div className="flex items-center gap-2.5">
                   <span
-                    className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 font-mono text-[11px]"
+                    className="inline-flex items-center gap-1.5 rounded-full px-3 py-0.5 font-mono text-xs"
                     style={{
-                      backgroundColor: 'var(--status-active-bg)',
-                      color: 'var(--status-active)',
+                      backgroundColor: "var(--status-active-bg)",
+                      color: "var(--status-active)",
                     }}
                   >
                     <span
@@ -131,36 +127,34 @@ export default function ProjectGrid({ projects }: { projects: Project[] }) {
                     />
                     {project.status}
                   </span>
-                  <ArrowUpRight
-                    size={16}
-                    aria-hidden="true"
-                    className="text-(--text-subtle) transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-(--accent)"
-                  />
+                  {project.role && (
+                    <span className="font-mono text-xs text-(--text-subtle)">
+                      · {project.role}
+                    </span>
+                  )}
                 </div>
+
+                <ArrowUpRight
+                  size={18}
+                  aria-hidden="true"
+                  className="text-(--text-subtle) transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-(--accent)"
+                />
               </div>
 
-              {/* Title & Role */}
-              <h3 className="font-mono text-base sm:text-lg font-medium text-(--text) group-hover:text-(--accent) transition-colors mb-2">
+              <h3 className="font-serif text-2xl sm:text-[1.65rem] text-(--text) group-hover:text-(--accent) transition-colors mb-3.5 leading-snug">
                 {project.name}
-                {project.role && (
-                  <span className="ml-2 rounded-sm border border-(--border) bg-(--bg) px-2 py-0.5 text-[11px] font-normal text-(--text-subtle)">
-                    {project.role}
-                  </span>
-                )}
               </h3>
 
-              {/* Summary */}
-              <p className="text-sm leading-relaxed text-(--text-muted) mb-5 md:mb-6">
+              <p className="text-base leading-[1.7] text-(--text-muted) mb-8">
                 {project.summary}
               </p>
             </div>
 
-            {/* Tags footer */}
-            <div className="flex flex-wrap items-center gap-1.5 border-t border-(--border) pt-3.5 md:pt-4">
+            <div className="flex flex-wrap items-center gap-2 pt-2">
               {project.tags.map((tag) => (
                 <span
                   key={tag}
-                  className="rounded-sm bg-(--bg) px-2 py-0.5 font-mono text-[11px] text-(--text-subtle)"
+                  className="rounded-md bg-(--surface) px-2.5 py-1 font-mono text-xs text-(--text-subtle)"
                 >
                   {tag}
                 </span>

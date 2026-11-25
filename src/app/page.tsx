@@ -1,4 +1,3 @@
-import HeroTelemetry from "@/components/HeroTelemetry";
 import InteractiveTerminal from "@/components/InteractiveTerminal";
 import ProjectGrid from "@/components/ProjectGrid";
 import SiteHeader from "@/components/SiteHeader";
@@ -11,8 +10,8 @@ import Link from "next/link";
 
 const GithubMark = () => (
   <svg
-    width={14}
-    height={14}
+    width={15}
+    height={15}
     viewBox="0 0 24 24"
     fill="currentColor"
     aria-hidden="true"
@@ -24,8 +23,8 @@ const GithubMark = () => (
 
 export default function Page() {
   const city = person.location.split(",")[0]?.trim() ?? person.location;
-  const visiblePosts = getAllPostsMeta().slice(0, 3);
-  const stackPills = person.skillsSummary.split("·").map((item) => item.trim());
+  const allPosts = getAllPostsMeta();
+  const visiblePosts = allPosts.slice(0, 3);
 
   const profilePageJsonLd = {
     "@context": "https://schema.org",
@@ -56,84 +55,59 @@ export default function Page() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(profilePageJsonLd) }}
       />
-      <SiteHeader handle={person.handle} />
+      <SiteHeader handle={person.handle} posts={allPosts} />
 
       <main id="main-content" className="container-main">
-        {/* 1. Hero */}
+        {/* 1. Editorial Hero */}
         <section
           id="hero"
           aria-labelledby="hero-heading"
-          className="pt-10 pb-12 sm:pt-20 sm:pb-20 lg:pt-24 lg:pb-24"
+          className="pt-20 pb-24 sm:pt-32 sm:pb-36 lg:pt-40 lg:pb-44"
         >
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-start">
-            {/* Editorial Pitch Column */}
-            <div className="lg:col-span-7">
-              <div className="mb-4 sm:mb-6 flex flex-wrap items-center gap-2.5">
-                <span className="inline-flex items-center gap-2 rounded-full border border-(--border) bg-(--surface) px-3 py-1 font-mono text-xs text-(--text-muted)">
-                  <span
-                    aria-hidden="true"
-                    className="h-2 w-2 rounded-full bg-(--status-active)"
-                  />
-                  <span>{person.location}</span>
-                </span>
-                <span className="font-mono text-xs text-(--text-subtle)">
-                  {person.name}
-                </span>
-              </div>
-
-              <h1
-                id="hero-heading"
-                className="font-serif `text-(length:--text-hero) text-(--text) hover-wonk mb-4 sm:mb-5 leading-[1.08] tracking-tight"
-              >
-                &ldquo;{person.tagline}&rdquo;
-              </h1>
-
-              <p className="max-w-xl text-sm sm:text-lg leading-relaxed text-(--text-muted) mb-5 sm:mb-7">
-                Open-source CLI tools, resilient developer utilities, and DNS
-                infrastructure built in public from {city}.
-              </p>
-
-              <div
-                aria-label="Core technologies"
-                className="flex flex-wrap items-center gap-1.5 sm:gap-2 mb-6 sm:mb-8"
-              >
-                {stackPills.map((pill) => (
-                  <span
-                    key={pill}
-                    className="rounded-md border border-(--border) bg-(--surface) px-2.5 py-1 font-mono text-xs text-(--text-muted)"
-                  >
-                    {pill}
-                  </span>
-                ))}
-              </div>
-
-              <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
-                <a
-                  href="#work"
-                  className="inline-flex min-h-11 items-center gap-2 rounded-md bg-(--accent) px-4 py-2 font-mono text-xs font-medium text-(--accent-contrast) transition-opacity hover:opacity-90"
-                >
-                  <span>Explore work</span>
-                  <span aria-hidden="true">↓</span>
-                </a>
-                <a
-                  href={links.github}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex min-h-11 items-center gap-2 rounded-md border border-(--border) bg-(--surface) px-4 py-2 font-mono text-xs text-(--text) transition-colors hover:border-(--accent)"
-                >
-                  <span>GitHub</span>
-                  <ArrowUpRight size={14} aria-hidden="true" />
-                </a>
-              </div>
+          <div className="max-w-4xl">
+            <div className="mb-8 sm:mb-10 flex flex-wrap items-center gap-3 font-mono text-xs sm:text-sm text-(--text-muted)">
+              <span className="inline-flex items-center gap-2">
+                <span
+                  aria-hidden="true"
+                  className="h-2 w-2 rounded-full bg-(--status-active)"
+                />
+                <span>{person.location}</span>
+              </span>
+              <span aria-hidden="true" className="text-(--text-subtle)">
+                ·
+              </span>
+              <span className="text-(--text-subtle)">{person.name}</span>
             </div>
 
-            {/* Precision Telemetry Spec Card (collapsible on mobile, expanded on desktop) */}
-            <div className="lg:col-span-5">
-              <HeroTelemetry
-                handle={person.handle}
-                location={person.location}
-                projectCount={projects.length}
-              />
+            <h1
+              id="hero-heading"
+              className="font-serif text-[length:var(--text-hero)] text-(--text) hover-wonk mb-8 sm:mb-10 leading-[1.06] tracking-[-0.025em]"
+            >
+              {person.tagline}
+            </h1>
+
+            <p className="max-w-2xl text-lg sm:text-xl leading-[1.7] text-(--text-muted) mb-10 sm:mb-12">
+              Open-source CLI tools, resilient developer utilities, and DNS
+              infrastructure built in public from {city}.
+            </p>
+
+            <div className="flex flex-wrap items-center gap-4">
+              <a
+                href="#work"
+                className="inline-flex min-h-12 items-center gap-2.5 rounded-md bg-(--accent) px-6 py-3 font-mono text-xs sm:text-sm font-medium text-(--accent-contrast) transition-opacity hover:opacity-90"
+              >
+                <span>Explore work</span>
+                <span aria-hidden="true">↓</span>
+              </a>
+              <a
+                href={links.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex min-h-12 items-center gap-2 rounded-md border border-(--border) bg-(--surface-elevated) px-6 py-3 font-mono text-xs sm:text-sm text-(--text) transition-colors hover:border-(--accent)"
+              >
+                <span>GitHub</span>
+                <ArrowUpRight size={15} aria-hidden="true" />
+              </a>
             </div>
           </div>
         </section>
@@ -144,74 +118,66 @@ export default function Page() {
           aria-labelledby="work-heading"
           className="section-block border-t border-(--border)"
         >
-          <div className="flex flex-wrap items-baseline justify-between gap-4 mb-6 sm:mb-10">
+          <div className="flex flex-wrap items-baseline justify-between gap-4 mb-12 sm:mb-16">
             <div>
-              <p className="font-mono text-[11px] uppercase tracking-widest text-(--accent) mb-1">
-                01 {"//"} Selected Systems
-              </p>
               <h2
                 id="work-heading"
-                className="font-serif text-(length:--text-2xl) text-(--text)"
+                className="font-serif text-[length:var(--text-2xl)] text-(--text) tracking-[-0.02em]"
               >
-                Work &amp; Open Source
+                Selected Work
               </h2>
             </div>
             <span className="font-mono text-xs text-(--text-subtle)">
-              0{projects.length} repositories
+              {projects.length} open-source projects
             </span>
           </div>
 
           <ProjectGrid projects={projects} />
         </section>
 
-        {/* 3. Writing (Renders nothing until posts exist) */}
+        {/* 3. Writing */}
         {visiblePosts.length > 0 && (
           <section
             id="writing"
             aria-labelledby="writing-heading"
             className="section-block border-t border-(--border)"
           >
-            <div className="flex flex-wrap items-baseline justify-between gap-4 mb-6 sm:mb-8">
-              <div>
-                <p className="font-mono text-[11px] uppercase tracking-widest text-(--accent) mb-1">
-                  02 {"//"} Notes &amp; Logs
-                </p>
-                <h2
-                  id="writing-heading"
-                  className="font-serif text-(length:--text-2xl) text-(--text)"
-                >
-                  Latest Writing
-                </h2>
-              </div>
+            <div className="flex flex-wrap items-baseline justify-between gap-4 mb-12 sm:mb-16">
+              <h2
+                id="writing-heading"
+                className="font-serif text-[length:var(--text-2xl)] text-(--text) tracking-[-0.02em]"
+              >
+                Writing
+              </h2>
               <Link
                 href="/writing"
-                className="inline-flex min-h-11 items-center gap-1.5 font-mono text-xs text-(--text-muted) hover:text-(--accent) transition-colors"
+                className="inline-flex min-h-11 items-center gap-1.5 font-mono text-xs sm:text-sm text-(--text-muted) hover:text-(--accent) transition-colors"
               >
                 <span>All posts</span>
-                <ArrowUpRight size={14} aria-hidden="true" />
+                <ArrowUpRight size={15} aria-hidden="true" />
               </Link>
             </div>
 
-            <div className="space-y-3 sm:space-y-4">
+            <div className="divide-y divide-(--border) border-y border-(--border)">
               {visiblePosts.map((post) => (
                 <Link
                   key={post.slug}
                   href={`/writing/${post.slug}`}
-                  className="surface-card group block p-5 sm:p-6"
+                  className="group flex flex-col sm:flex-row sm:items-baseline justify-between gap-3 py-8 sm:py-10 transition-colors"
                 >
-                  <div className="flex flex-wrap items-baseline justify-between gap-2 mb-2">
-                    <h3 className="font-mono text-base font-medium text-(--text) group-hover:text-(--accent) transition-colors">
+                  <div className="max-w-2xl">
+                    <h3 className="font-serif text-xl sm:text-2xl text-(--text) group-hover:text-(--accent) transition-colors mb-2.5">
                       {post.title}
                     </h3>
-                    <div className="flex items-center gap-2 font-mono text-xs text-(--text-subtle)">
-                      <time dateTime={post.date}>{post.date}</time>
-                      <span aria-hidden="true">·</span>
-                      <span>{post.readingTime}</span>
-                    </div>
+                    <p className="text-base leading-relaxed text-(--text-muted)">
+                      {post.description}
+                    </p>
                   </div>
-                  <p className="text-sm text-(--text-muted)">
-                    {post.description}
-                  </p>
+                  <div className="flex items-center gap-2 font-mono text-xs text-(--text-subtle) shrink-0">
+                    <time dateTime={post.date}>{post.date}</time>
+                    <span aria-hidden="true">·</span>
+                    <span>{post.readingTime}</span>
+                  </div>
                 </Link>
               ))}
             </div>
@@ -224,67 +190,65 @@ export default function Page() {
           aria-labelledby="about-heading"
           className="section-block border-t border-(--border)"
         >
-          <p className="font-mono text-[11px] uppercase tracking-widest text-(--accent) mb-1">
-            03 {"//"} Background
-          </p>
-          <h2
-            id="about-heading"
-            className="font-serif text-(length:--text-2xl) text-(--text) mb-4 sm:mb-6"
-          >
-            Self-taught &amp; shipping in public
-          </h2>
+          <div className="max-w-3xl mb-14 sm:mb-16">
+            <h2
+              id="about-heading"
+              className="font-serif text-[length:var(--text-2xl)] text-(--text) tracking-[-0.02em] mb-6"
+            >
+              Self-taught &amp; shipping in public
+            </h2>
 
-          <p className="text-sm sm:text-base leading-relaxed text-(--text-muted) max-w-2xl mb-6 sm:mb-8">
-            {person.shortBio}
-          </p>
+            <p className="text-lg sm:text-xl leading-[1.75] text-(--text-muted)">
+              {person.shortBio}
+            </p>
+          </div>
 
-          <div className="mb-6 sm:mb-8">
+          <div className="mb-14 sm:mb-16">
             <StatCard projectCount={projects.length} />
           </div>
 
-          <InteractiveTerminal
-            handle={person.handle}
-            terminalLines={person.terminalLines}
-            projects={projects}
-          />
+          <div className="mb-8">
+            <InteractiveTerminal
+              handle={person.handle}
+              terminalLines={person.terminalLines}
+              projects={projects}
+            />
+          </div>
 
-          <p className="font-mono text-xs text-(--text-subtle) flex items-center gap-2 mb-10 sm:mb-12">
+          <p className="font-mono text-xs text-(--text-subtle) flex items-center gap-2 mb-20 sm:mb-24">
             <GithubMark />
             <span>{person.educationNote}</span>
           </p>
 
           {/* Now Sub-section */}
           {nowItems.length > 0 && (
-            <div
-              aria-labelledby="now-heading"
-              className="surface-panel p-5 sm:p-6"
-            >
-              <div className="flex items-center justify-between gap-2 mb-4">
+            <div aria-labelledby="now-heading" className="pt-4">
+              <div className="flex items-baseline justify-between gap-2 mb-8">
                 <h3
                   id="now-heading"
-                  className="font-mono text-xs uppercase tracking-wider text-(--accent)"
+                  className="font-serif text-2xl sm:text-3xl text-(--text) tracking-[-0.015em]"
                 >
-                  Now {"//"} Current Focus
+                  What I&apos;m focused on now
                 </h3>
-                <span className="font-mono text-[11px] text-(--text-subtle)">
-                  updated Nov 2026
+                <span className="font-mono text-xs text-(--text-subtle)">
+                  Nov 2026
                 </span>
               </div>
-              <ul className="space-y-3">
+              <dl className="divide-y divide-(--border) border-y border-(--border)">
                 {nowItems.map((item) => (
-                  <li
+                  <div
                     key={item.label}
-                    className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-3 text-sm"
+                    className="grid grid-cols-1 md:grid-cols-12 gap-2 md:gap-8 py-6 sm:py-7"
                   >
-                    <span className="font-mono text-xs font-medium text-(--text) shrink-0">
-                      → {item.label}:
-                    </span>
-                    <span className="text-(--text-muted) leading-relaxed">
+                    <dt className="md:col-span-4 font-mono text-sm font-medium text-(--text)">
+                      {item.label}
+                    </dt>
+                    <dd className="md:col-span-8 text-base leading-relaxed text-(--text-muted)">
                       {item.detail}
-                    </span>
-                  </li>
+                    </dd>
+                  </div>
                 ))}
-              </ul>
+              </dl>
             </div>
           )}
         </section>
@@ -295,34 +259,33 @@ export default function Page() {
           aria-labelledby="support-heading"
           className="section-block border-t border-(--border)"
         >
-          <p className="font-mono text-[11px] uppercase tracking-widest text-(--accent) mb-1">
-            04 {"//"} Sponsorship
-          </p>
-          <h2
-            id="support-heading"
-            className="font-serif text-(length:--text-2xl) italic text-(--text) mb-3 sm:mb-4"
-          >
-            &ldquo;Support the work.&rdquo;
-          </h2>
+          <div className="max-w-2xl mb-10 sm:mb-12">
+            <h2
+              id="support-heading"
+              className="font-serif text-[length:var(--text-2xl)] italic text-(--text) tracking-[-0.02em] mb-5"
+            >
+              Support the work.
+            </h2>
 
-          <p className="text-sm sm:text-base leading-relaxed text-(--text-muted) max-w-2xl mb-6 sm:mb-8">
-            Everything here is free and open source. If a tool saved you time or
-            unblocked a deploy, sponsoring on GitHub helps sustain the work and
-            supports future releases.
-          </p>
+            <p className="text-lg leading-[1.75] text-(--text-muted) mb-8">
+              Everything here is free and open source. If a tool saved you time
+              or unblocked a deploy, sponsoring on GitHub helps sustain the work
+              and supports future releases.
+            </p>
 
-          <a
-            href={links.sponsor}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex min-h-11 items-center gap-2 rounded-md bg-(--accent) px-5 py-2.5 font-mono text-sm font-medium text-(--accent-contrast) transition-opacity hover:opacity-90"
-          >
-            <span aria-hidden="true">♥</span>
-            <span>Sponsor on GitHub</span>
-          </a>
+            <a
+              href={links.sponsor}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex min-h-12 items-center gap-2 rounded-md bg-(--accent) px-6 py-3 font-mono text-sm font-medium text-(--accent-contrast) transition-opacity hover:opacity-90"
+            >
+              <span aria-hidden="true">♥</span>
+              <span>Sponsor on GitHub</span>
+            </a>
+          </div>
 
-          <div className="mt-8 sm:mt-12">
-            <p className="font-mono text-xs uppercase tracking-wider text-(--text-subtle) mb-3 sm:mb-4">
+          <div className="mt-14 sm:mt-20">
+            <p className="font-mono text-xs uppercase tracking-wider text-(--text-subtle) mb-6">
               Backed by
             </p>
             <SponsorGrid />
@@ -335,62 +298,59 @@ export default function Page() {
           aria-labelledby="contact-heading"
           className="section-block border-t border-(--border)"
         >
-          <p className="font-mono text-[11px] uppercase tracking-widest text-(--accent) mb-1">
-            05 {"//"} Connect
-          </p>
           <h2
             id="contact-heading"
-            className="font-serif text-(length:--text-2xl) text-(--text) mb-5 sm:mb-6"
+            className="font-serif text-[length:var(--text-2xl)] text-(--text) tracking-[-0.02em] mb-8 sm:mb-10"
           >
-            &ldquo;Let&apos;s talk.&rdquo;
+            Let&apos;s talk.
           </h2>
 
-          <div className="font-mono text-sm flex flex-wrap gap-2">
+          <div className="font-mono text-sm flex flex-wrap gap-3 sm:gap-4">
             <a
               href={links.github}
               target="_blank"
               rel="noopener noreferrer"
-              className="surface-card inline-flex min-h-11 items-center gap-2 px-4 text-(--text-muted) hover:text-(--text)"
+              className="surface-card inline-flex min-h-12 items-center gap-2 px-5 py-3 text-(--text-muted) hover:text-(--text)"
             >
               <span>github</span>
-              <ArrowUpRight size={14} aria-hidden="true" />
+              <ArrowUpRight size={15} aria-hidden="true" />
             </a>
             <a
               href={links.x}
               target="_blank"
               rel="noopener noreferrer"
-              className="surface-card inline-flex min-h-11 items-center gap-2 px-4 text-(--text-muted) hover:text-(--text)"
+              className="surface-card inline-flex min-h-12 items-center gap-2 px-5 py-3 text-(--text-muted) hover:text-(--text)"
             >
               <span>x</span>
-              <ArrowUpRight size={14} aria-hidden="true" />
+              <ArrowUpRight size={15} aria-hidden="true" />
             </a>
             <a
               href={links.discord}
               target="_blank"
               rel="noopener noreferrer"
-              className="surface-card inline-flex min-h-11 items-center gap-2 px-4 text-(--text-muted) hover:text-(--text)"
+              className="surface-card inline-flex min-h-12 items-center gap-2 px-5 py-3 text-(--text-muted) hover:text-(--text)"
             >
               <span>discord</span>
-              <ArrowUpRight size={14} aria-hidden="true" />
+              <ArrowUpRight size={15} aria-hidden="true" />
             </a>
             <a
               href={`mailto:${links.email}`}
-              className="surface-card inline-flex min-h-11 items-center gap-2 px-4 text-(--text-muted) hover:text-(--text) break-all"
+              className="surface-card inline-flex min-h-12 items-center gap-2 px-5 py-3 text-(--text-muted) hover:text-(--text) break-all"
             >
               <span>{links.email}</span>
-              <ArrowUpRight size={14} aria-hidden="true" />
+              <ArrowUpRight size={15} aria-hidden="true" />
             </a>
           </div>
         </section>
       </main>
 
-      <footer className="border-t border-(--border) py-8 sm:py-10">
-        <div className="container-main flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+      <footer className="border-t border-(--border) py-14 sm:py-20">
+        <div className="container-main flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <p className="font-mono text-xs text-(--text-subtle)">
             © 2026 {person.name} · built in {city}
           </p>
           <p className="font-mono text-xs text-(--text-subtle)">
-            {person.handle} {"//"} open source
+            {person.handle} · open source
           </p>
         </div>
       </footer>
