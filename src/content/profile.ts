@@ -58,7 +58,7 @@ export interface PersonProfile {
 
 export const links: ProfileLinks = {
   github: "https://github.com/0xProgress",
-  x: "https://x.com/0xProgress",
+  x: "https://x.com/0xProgress_",
   discord: "https://discord.com/users/1214231706698252320",
   email: "progressuwhuseba@gmail.com",
   sponsor: "https://github.com/sponsors/0xProgress",

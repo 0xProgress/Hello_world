@@ -6,7 +6,7 @@ Student. Building fast, reliable, low-resource tools in Go and Python.
 ## Projects
 
 - [waitfor](https://github.com/0xProgress/waitfor)
-- [retry](https://github.com/0xProgress/retry)
+- [clippy](https://github.com/0xProgress/clippy)
 - [is-a.dev](https://github.com/is-a-dev/register) - Maintainer
 
 ## Contact
