@@ -7,6 +7,7 @@ tags:
   - cli
   - open-source
 draft: false
+unlisted: false
 ---
 
 Most developer tooling fails in one of two ways: it pulls in half the internet to solve a twenty-line problem, or it hangs silently when something goes wrong in CI.

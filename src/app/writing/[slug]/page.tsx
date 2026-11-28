@@ -1,23 +1,23 @@
-import PostContent from "@/components/PostContent";
-import SiteHeader from "@/components/SiteHeader";
-import { links, person, projects } from "@/content/profile";
-import { getAllPosts, getAllPostsMeta, getPostBySlug } from "@/lib/posts";
+import type { Metadata } from 'next';
+import Image from 'next/image';
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
 import {
-    ArrowLeft,
-    ArrowRight,
-    ArrowUpRight,
-    ChevronDown,
-    List,
-} from "lucide-react";
-import type { Metadata } from "next";
-import Image from "next/image";
-import Link from "next/link";
-import { notFound } from "next/navigation";
+  ArrowLeft,
+  ArrowRight,
+  ArrowUpRight,
+  ChevronDown,
+  List,
+} from 'lucide-react';
+import SiteHeader from '@/components/SiteHeader';
+import PostContent from '@/components/PostContent';
+import { links, person, projects } from '@/content/profile';
+import { getAllPosts, getAllPostsMeta, getPostBySlug } from '@/lib/posts';
 
 export const dynamicParams = false;
 
 export async function generateStaticParams() {
-  const posts = getAllPostsMeta();
+  const posts = getAllPostsMeta({ includeUnlisted: true });
   return posts.map((post) => ({ slug: post.slug }));
 }
 
@@ -38,8 +38,16 @@ export async function generateMetadata({
     alternates: {
       canonical: `/writing/${post.slug}`,
     },
+    ...(post.unlisted
+      ? {
+          robots: {
+            index: false,
+            follow: false,
+          },
+        }
+      : {}),
     openGraph: {
-      type: "article",
+      type: 'article',
       title: post.title,
       description: post.description,
       publishedTime: post.date,
@@ -47,7 +55,7 @@ export async function generateMetadata({
       images: [{ url: ogImageUrl, width: 1200, height: 630, alt: post.title }],
     },
     twitter: {
-      card: "summary_large_image",
+      card: 'summary_large_image',
       title: post.title,
       description: post.description,
       images: [ogImageUrl],
@@ -61,56 +69,61 @@ export default async function PostPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const allPosts = await getAllPosts();
-  const currentIndex = allPosts.findIndex((p) => p.slug === slug);
+  const post = await getPostBySlug(slug);
 
-  if (currentIndex === -1) {
+  if (!post) {
     notFound();
   }
 
-  const post = allPosts[currentIndex];
-  const newerPost = currentIndex > 0 ? allPosts[currentIndex - 1] : null;
+  const publicPosts = await getAllPosts();
+  const publicIndex = post.unlisted
+    ? -1
+    : publicPosts.findIndex((p) => p.slug === slug);
+
+  const newerPost = publicIndex > 0 ? publicPosts[publicIndex - 1] : null;
   const olderPost =
-    currentIndex < allPosts.length - 1 ? allPosts[currentIndex + 1] : null;
+    publicIndex !== -1 && publicIndex < publicPosts.length - 1
+      ? publicPosts[publicIndex + 1]
+      : null;
 
   const postTags = new Set(post.tags.map((t) => t.toLowerCase()));
   const relatedProjects = projects.filter((project) =>
-    project.tags.some((tag) => postTags.has(tag.toLowerCase())),
+    project.tags.some((tag) => postTags.has(tag.toLowerCase()))
   );
 
-  const siteUrl = links.website.replace(/\/$/, "");
+  const siteUrl = links.website.replace(/\/$/, '');
   const postUrl = `${siteUrl}/writing/${post.slug}`;
   const resolvedImage = post.image
     ? `${siteUrl}${post.image}`
     : `${postUrl}/opengraph-image`;
 
   const blogPostingJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "BlogPosting",
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
     headline: post.title,
     description: post.description,
     datePublished: post.date,
     dateModified: post.date,
     url: postUrl,
     mainEntityOfPage: {
-      "@type": "WebPage",
-      "@id": postUrl,
+      '@type': 'WebPage',
+      '@id': postUrl,
     },
     image: resolvedImage,
-    keywords: post.tags.join(", "),
+    keywords: post.tags.join(', '),
     author: {
-      "@type": "Person",
+      '@type': 'Person',
       name: person.name,
       url: links.website,
     },
     publisher: {
-      "@type": "Person",
+      '@type': 'Person',
       name: person.name,
       url: links.website,
     },
   };
 
-  const city = person.location.split(",")[0]?.trim() ?? person.location;
+  const city = person.location.split(',')[0]?.trim() ?? person.location;
 
   return (
     <>
@@ -118,7 +131,7 @@ export default async function PostPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(blogPostingJsonLd) }}
       />
-      <SiteHeader handle={person.handle} />
+      <SiteHeader handle={person.handle} posts={publicPosts} />
 
       <main id="main-content" className="container-main pt-10 pb-20 sm:pt-16">
         <div className="mb-8">
@@ -137,9 +150,17 @@ export default async function PostPage({
             <time dateTime={post.date}>{post.date}</time>
             <span aria-hidden="true">·</span>
             <span>{post.readingTime}</span>
+            {post.unlisted && (
+              <>
+                <span aria-hidden="true">·</span>
+                <span className="rounded-sm border border-(--border) bg-(--surface) px-2 py-0.5 text-[11px] text-(--accent)">
+                  unlisted
+                </span>
+              </>
+            )}
           </div>
 
-          <h1 className="font-serif text-(length:--text-hero) text-(--text) leading-[1.12] tracking-tight mb-4">
+          <h1 className="font-serif text-[length:var(--text-hero)] text-(--text) leading-[1.12] tracking-tight mb-4">
             {post.title}
           </h1>
 
@@ -178,11 +199,7 @@ export default async function PostPage({
           <details className="surface-panel mb-8 p-4 lg:hidden group">
             <summary className="flex min-h-10 cursor-pointer list-none items-center justify-between font-mono text-xs font-medium text-(--text)">
               <span className="inline-flex items-center gap-2">
-                <List
-                  size={14}
-                  aria-hidden="true"
-                  className="text-(--accent)"
-                />
+                <List size={14} aria-hidden="true" className="text-(--accent)" />
                 <span>Table of contents</span>
               </span>
               <ChevronDown
@@ -199,7 +216,7 @@ export default async function PostPage({
                 {post.headings.map((heading) => (
                   <li
                     key={heading.id}
-                    className={heading.level === 3 ? "pl-4" : ""}
+                    className={heading.level === 3 ? 'pl-4' : ''}
                   >
                     <a
                       href={`#${heading.id}`}
@@ -219,8 +236,8 @@ export default async function PostPage({
           <article
             className={
               post.headings.length > 0
-                ? "lg:col-span-8 min-w-0"
-                : "lg:col-span-12 min-w-0"
+                ? 'lg:col-span-8 min-w-0'
+                : 'lg:col-span-12 min-w-0'
             }
           >
             <PostContent html={post.html} />
@@ -240,7 +257,7 @@ export default async function PostPage({
                     {post.headings.map((heading) => (
                       <li
                         key={heading.id}
-                        className={heading.level === 3 ? "pl-3.5" : ""}
+                        className={heading.level === 3 ? 'pl-3.5' : ''}
                       >
                         <a
                           href={`#${heading.id}`}
@@ -346,7 +363,7 @@ export default async function PostPage({
             © 2026 {person.name} · built in {city}
           </p>
           <p className="font-mono text-xs text-(--text-subtle)">
-            {person.handle} {"//"} open source
+            {person.handle} {'//'} open source
           </p>
         </div>
       </footer>

@@ -7,6 +7,7 @@ tags:
 - career
 - thoughts
 draft: false
+unlisted: false
 ---
 
 Someone asked me what I thought about the saying: *all software engineers are developers, but not all developers are software engineers.*

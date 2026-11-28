@@ -1,14 +1,14 @@
-import matter from 'gray-matter';
 import fs from 'node:fs';
 import path from 'node:path';
-import rehypeAutolinkHeadings from 'rehype-autolink-headings';
-import rehypeSlug from 'rehype-slug';
-import rehypeStringify from 'rehype-stringify';
-import remarkGfm from 'remark-gfm';
-import remarkParse from 'remark-parse';
-import remarkRehype from 'remark-rehype';
-import { createHighlighter, type Highlighter } from 'shiki';
+import matter from 'gray-matter';
 import { unified } from 'unified';
+import remarkParse from 'remark-parse';
+import remarkGfm from 'remark-gfm';
+import remarkRehype from 'remark-rehype';
+import rehypeSlug from 'rehype-slug';
+import rehypeAutolinkHeadings from 'rehype-autolink-headings';
+import rehypeStringify from 'rehype-stringify';
+import { createHighlighter, type Highlighter } from 'shiki';
 
 const POSTS_DIR = path.join(process.cwd(), 'content', 'posts');
 
@@ -25,6 +25,7 @@ export interface PostMeta {
   description: string;
   tags: string[];
   draft: boolean;
+  unlisted: boolean;
   image?: string;
   readingTime: string;
 }
@@ -93,6 +94,16 @@ function validateFrontmatter(
     draft = data.draft;
   }
 
+  let unlisted = false;
+  if (data.unlisted !== undefined) {
+    if (typeof data.unlisted !== 'boolean') {
+      throw new Error(
+        `[frontmatter error] ${relPath}: invalid field "unlisted" (expected boolean).`
+      );
+    }
+    unlisted = data.unlisted;
+  }
+
   let image: string | undefined;
   if (data.image !== undefined && data.image !== null && data.image !== '') {
     if (typeof data.image !== 'string' || !data.image.startsWith('/posts/')) {
@@ -109,6 +120,7 @@ function validateFrontmatter(
     description: data.description.trim(),
     tags,
     draft,
+    unlisted,
     image,
   };
 }
@@ -282,7 +294,9 @@ function readPostFiles(): string[] {
     .sort();
 }
 
-export function getAllPostsMeta(): PostMeta[] {
+export function getAllPostsMeta({
+  includeUnlisted = false,
+}: { includeUnlisted?: boolean } = {}): PostMeta[] {
   const files = readPostFiles();
   const posts: PostMeta[] = [];
 
@@ -299,6 +313,10 @@ export function getAllPostsMeta(): PostMeta[] {
       continue;
     }
 
+    if (validated.unlisted && !includeUnlisted) {
+      continue;
+    }
+
     const slug = filename.replace(/\.md$/, '');
     posts.push({
       slug,
@@ -310,7 +328,9 @@ export function getAllPostsMeta(): PostMeta[] {
   return posts.sort((a, b) => b.date.localeCompare(a.date));
 }
 
-export async function getAllPosts(): Promise<Post[]> {
+export async function getAllPosts({
+  includeUnlisted = false,
+}: { includeUnlisted?: boolean } = {}): Promise<Post[]> {
   const files = readPostFiles();
   const posts: Post[] = [];
 
@@ -324,6 +344,10 @@ export async function getAllPosts(): Promise<Post[]> {
     );
 
     if (validated.draft) {
+      continue;
+    }
+
+    if (validated.unlisted && !includeUnlisted) {
       continue;
     }
 
@@ -343,6 +367,6 @@ export async function getAllPosts(): Promise<Post[]> {
 }
 
 export async function getPostBySlug(slug: string): Promise<Post | null> {
-  const posts = await getAllPosts();
+  const posts = await getAllPosts({ includeUnlisted: true });
   return posts.find((p) => p.slug === slug) ?? null;
 }
